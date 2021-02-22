@@ -1,4 +1,4 @@
-from flask import Flask, request, send_from_directory, render_template
+from flask import Flask, request, send_from_directory, render_template, redirect
 from flask_wtf.csrf import CSRFProtect
 from requests import get, post, put, delete
 import dotenv
@@ -40,6 +40,20 @@ def thing_get(_id):
 	res = dg.thing_get(raw)
 	return render_template('thing.html.j2', object=res)
 
+@app.route('/a/<string:_id>', methods=['GET'])
+@csrf.exempt
+def thing_get_all(_id):
+	raw = get(f'{db}/thing/asset/{_id}').json()
+	res = dg.thing_get_all(raw)
+	return render_template('list.html.j2', objects=res)
+
+
+@app.route('/a', methods=['GET'])
+@csrf.exempt
+def thing_all():
+	raw = get(f'{db}/thing/all').json()
+	res = dg.thing_get_all(raw)
+	return render_template('list.html.j2', objects=res)
 
 
 if __name__ == "__main__":
