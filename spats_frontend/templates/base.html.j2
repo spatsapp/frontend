@@ -1,0 +1,36 @@
+<html{% block html_attribs %}{% endblock html_attribs %}>
+{%- block html %}
+	{% block head %}
+		<title>{% block title %}SPATS{% if title %} - {{ title }}{% endif %}{% endblock %}</title>
+		{%- block metas %}
+			<meta charset="utf-8">
+			<meta name="author" content="Sean Slater">
+		{%- endblock metas %}
+			<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+			<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+			<link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
+			{% block css %}{% endblock css %}
+	{% endblock head %}
+	{% block body %}
+		<div class="container">
+		<header>
+			{% block header %}
+				SPATS - Spats Personal Asset Tracking Software
+			{% endblock header %}
+		</header>
+		<nav>
+			{% block nav %}
+			{% endblock nav %}
+		</nav>
+		<hr />
+		<main>
+			{% block content %}
+			{% endblock content %}
+		</main>
+		<footer>
+			{% block footer %}Spats (c) 2019-2021{% endblock footer %}
+		</footer>
+		</div>
+	{% endblock body %}
+{%- endblock html %}
+</html>

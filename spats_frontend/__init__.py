@@ -1,4 +1,4 @@
-from flask import Flask, request, send_from_directory
+from flask import Flask, request, send_from_directory, render_template
 from flask_wtf.csrf import CSRFProtect
 from requests import get, post, put, delete
 import dotenv
@@ -31,13 +31,14 @@ def favicon():
 @csrf.exempt
 def query_api():
 	res = get(f'{db}/').json()
-	return dg.generate(res)
+	return res
 
 @app.route('/t/<string:_id>', methods=['GET'])
 @csrf.exempt
 def thing_get(_id):
-	res = get(f'{db}/thing/{_id}').json()
-	return dg.thing_get(res)
+	raw = get(f'{db}/thing/{_id}').json()
+	res = dg.thing_get(raw)
+	return render_template('thing.html.j2', object=res)
 
 
 

@@ -1,0 +1,11 @@
+{% extends "base.html.j2" %}
+
+{% block content %}
+	<a href="/t/{{object['_id']}}"><h1 style="display:inline;">{{object['primary']}}</h1></a> 
+	<a href="/a/{{object['type']}}"><h3 style="display:inline;">({{object['asset']}})</h3></a>
+	<table>
+		{% for key, value in object.fields %}
+			<tr><td><b>{{key}}:</b> {{value}}</td></tr>
+		{% endfor %}
+	</table>
+{% endblock %}
