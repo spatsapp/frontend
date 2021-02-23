@@ -13,8 +13,8 @@ app.config.from_pyfile('frontend.cfg')
 csrf = CSRFProtect()
 csrf.init_app(app)
 
-db = app.config['DATABASE']
-dg = DisplayGenerator()
+database = app.config['DATABASE']
+display = DisplayGenerator()
 
 @app.before_request
 def clear_trailing():
@@ -27,18 +27,22 @@ def clear_trailing():
 @app.route('/', methods=['GET'])
 @csrf.exempt
 def query_api():
-	res = get(f'{db}/').json()
+	res = get(f'{database}/').json()
 	return render_template('base.html.j2', stuff=f'<pre>{pformat(res)}</pre>')
 
 @app.route('/asset', methods=['GET'])
 @csrf.exempt
 def asset_all():
-	pass
+	raw = get(f'{database}/asset/all').json()
+	res = display.asset_list(raw)
+	return render_template('assets.html.j2', objects=res)
 
 @app.route('/asset/<string:_id>', methods=['GET'])
 @csrf.exempt
 def asset_info(_id):
-	pass
+	raw = get(f'{database}/asset/{_id}').json()
+	res = display.asset_info(raw)
+	return render_template('asset.html.j2', object=res)
 
 @app.route('/asset/<string:_id>/edit', methods=['GET'])
 @csrf.exempt
@@ -59,15 +63,15 @@ def asset_new_type():
 @app.route('/thing', methods=['GET'])
 @csrf.exempt
 def thing_all():
-	raw = get(f'{db}/thing/all').json()
-	res = dg.thing_get_all(raw)
+	raw = get(f'{database}/thing/all').json()
+	res = display.thing_list(raw)
 	return render_template('list.html.j2', objects=res)
 
 @app.route('/thing/<string:_id>', methods=['GET'])
 @csrf.exempt
 def thing_info(_id):
-	raw = get(f'{db}/thing/{_id}').json()
-	res = dg.thing_get(raw)
+	raw = get(f'{database}/thing/{_id}').json()
+	res = display.thing_info(raw)
 	return render_template('thing.html.j2', object=res)
 
 @app.route('/thing/<string:_id>/edit', methods=['GET'])
@@ -78,8 +82,8 @@ def thing_edit():
 @app.route('/thing/asset/<string:_id>', methods=['GET'])
 @csrf.exempt
 def thing_asset_list(_id):
-	raw = get(f'{db}/thing/asset/{_id}').json()
-	res = dg.thing_get_all(raw)
+	raw = get(f'{database}/thing/asset/{_id}').json()
+	res = display.thing_list(raw)
 	return render_template('list.html.j2', objects=res)
 
 

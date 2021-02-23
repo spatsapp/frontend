@@ -12,20 +12,20 @@
 			{% block css %}{% endblock css %}
 	{% endblock head %}
 	{% block body %}
-		<div class="container">
+		<div class="container-fluid">
 		<header>
 			{% block header %}
-				SPATS - Spats Personal Asset Tracking Software
+				<h1>SPATS - Spats Personal Asset Tracking Software<h1>
 			{% endblock header %}
 		</header>
 		<nav>
 			{% block nav %}
 			<div class="row">|
-			<a class="col" style="text-align: center;" href='/'>Home</a> |
-			<a class="col" style="text-align: center;" href='/thing'>Things</a> |
-			<a class="col" style="text-align: center;" href='/asset'>Assets</a> |
-			<a class="col" style="text-align: center;" href='/combo'>Combos</a> |
-			<a class="col" style="text-align: center;" href='/group'>Groups</a> |
+			<a class="col" href='/'>Home</a> |
+			<a class="col" href='/thing'>Things</a> |
+			<a class="col" href='/asset'>Assets</a> |
+			<a class="col" href='/combo'>Combos</a> |
+			<a class="col" href='/group'>Groups</a> |
 			</div>
 			{% endblock nav %}
 		</nav>

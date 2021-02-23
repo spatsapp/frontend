@@ -1,7 +1,10 @@
+html {
+	font-size: 24px;
+}
+
 body {
 	height: 100%;
-	font-size: 100%;
-	margin: 0em;
+	margin: 1em;
 	background-color:black;
 	color:lime;
 	font-family: monospace;
@@ -9,14 +12,12 @@ body {
 
 header {
 	padding: 0.50em;
-
-	font-size: 3.00em;
 	text-align: center;
 }
 
 nav {
 	padding: 0.50em;
-	font-size: 1.50em;
+	text-align: center;
 }
 
 main {
@@ -25,13 +26,7 @@ main {
 
 footer {
 	padding: 0.75em;
-
-	font-size: 1.50em;
 	text-align: center;
-}
-
-nav ul {
-	list-style-type:none;
 }
 
 a:link, a:visited {
@@ -45,7 +40,6 @@ a:hover, a:active {
 
 .error {
 	margin: 2em;
-	font-size: 2em;
 	color: red;
 }
 
@@ -56,5 +50,4 @@ hr {
 pre {
 	color: lime;
 	font-family: monospace;
-	font-size: 1.5em;
 }

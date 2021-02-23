@@ -53,12 +53,12 @@ class DisplayGenerator:
 			'symbolic': symbolic['name']
 		}
 
-	def thing_get(self, doc):
+	def thing_info(self, doc):
 		thing = doc['thing']
 		asset = doc['asset'][thing['type']]
 		return self._single_material(thing, asset)
 
-	def thing_get_all(self, doc):
+	def thing_list(self, doc):
 		things = doc['thing']
 		res = []
 		for thing in things:
@@ -66,3 +66,27 @@ class DisplayGenerator:
 			cur = self._many_material(thing, asset)
 			res.append(cur)
 		return res
+
+	def asset_list(self, docs):
+		return [(doc['_id'], doc['name']) for doc in docs]
+
+	def asset_info(self, doc):
+		new_doc = {
+			'_id': doc['_id'],
+			'name': doc['name'],
+			'primary': doc['primary'],
+			'secondary': doc['secondary'],
+			'tertiary': ', '.join(doc['tertiary']) if doc['tertiary'] else doc['tertiary']
+		}
+		field_order = []
+		fields = doc['fields']
+		for key in doc['order']:
+			current = fields[key]
+			field_order.append({
+				'name': key,
+				'description': current['description'],
+				'parameters': current['parameters'],
+				'type': current['type']
+			})
+		new_doc['fields'] = field_order
+		return new_doc
