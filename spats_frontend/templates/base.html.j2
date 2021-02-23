@@ -20,10 +20,18 @@
 		</header>
 		<nav>
 			{% block nav %}
+			<div class="row">|
+			<a class="col" style="text-align: center;" href='/'>Home</a> |
+			<a class="col" style="text-align: center;" href='/thing'>Things</a> |
+			<a class="col" style="text-align: center;" href='/asset'>Assets</a> |
+			<a class="col" style="text-align: center;" href='/combo'>Combos</a> |
+			<a class="col" style="text-align: center;" href='/group'>Groups</a> |
+			</div>
 			{% endblock nav %}
 		</nav>
 		<hr />
 		<main>
+			{% if stuff is not none %}{{stuff|safe}}{% endif %}
 			{% block content %}
 			{% endblock content %}
 		</main>

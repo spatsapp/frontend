@@ -22,38 +22,112 @@ def clear_trailing():
 	if path != '/' and path.endswith('/'):
 		return redirect(path[:-1])
 
-@app.route('/favicon.ico', methods=['GET'])
-@csrf.exempt
-def favicon():
-	return send_from_directory('static', 'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
 
 @app.route('/', methods=['GET'])
 @csrf.exempt
 def query_api():
 	res = get(f'{db}/').json()
-	return res
+	return render_template('base.html.j2', stuff=f'<pre>{pformat(res)}</pre>')
 
-@app.route('/t/<string:_id>', methods=['GET'])
+@app.route('/asset', methods=['GET'])
 @csrf.exempt
-def thing_get(_id):
-	raw = get(f'{db}/thing/{_id}').json()
-	res = dg.thing_get(raw)
-	return render_template('thing.html.j2', object=res)
+def asset_all():
+	pass
 
-@app.route('/a/<string:_id>', methods=['GET'])
+@app.route('/asset/<string:_id>', methods=['GET'])
 @csrf.exempt
-def thing_get_all(_id):
-	raw = get(f'{db}/thing/asset/{_id}').json()
-	res = dg.thing_get_all(raw)
-	return render_template('list.html.j2', objects=res)
+def asset_info(_id):
+	pass
+
+@app.route('/asset/<string:_id>/edit', methods=['GET'])
+@csrf.exempt
+def asset_edit(_id):
+	pass
+
+@app.route('/asset/<string:_id>/new', methods=['GET'])
+@csrf.exempt
+def asset_new_thing(_id):
+	pass
+
+@app.route('/asset/new', methods=['GET'])
+@csrf.exempt
+def asset_new_type():
+	pass
 
 
-@app.route('/a', methods=['GET'])
+@app.route('/thing', methods=['GET'])
 @csrf.exempt
 def thing_all():
 	raw = get(f'{db}/thing/all').json()
 	res = dg.thing_get_all(raw)
 	return render_template('list.html.j2', objects=res)
+
+@app.route('/thing/<string:_id>', methods=['GET'])
+@csrf.exempt
+def thing_info(_id):
+	raw = get(f'{db}/thing/{_id}').json()
+	res = dg.thing_get(raw)
+	return render_template('thing.html.j2', object=res)
+
+@app.route('/thing/<string:_id>/edit', methods=['GET'])
+@csrf.exempt
+def thing_edit():
+	pass
+
+@app.route('/thing/asset/<string:_id>', methods=['GET'])
+@csrf.exempt
+def thing_asset_list(_id):
+	raw = get(f'{db}/thing/asset/{_id}').json()
+	res = dg.thing_get_all(raw)
+	return render_template('list.html.j2', objects=res)
+
+
+@app.route('/combo', methods=['GET'])
+@csrf.exempt
+def combo_all():
+	pass
+
+@app.route('/combo/<string:_id>', methods=['GET'])
+@csrf.exempt
+def combo_info(_id):
+	pass
+
+@app.route('/combo/<string:_id>/edit', methods=['GET'])
+@csrf.exempt
+def combo_edit(_id):
+	pass
+
+@app.route('/combo/<string:_id>/new', methods=['GET'])
+@csrf.exempt
+def combo_new_thing(_id):
+	pass
+
+@app.route('/combo/new', methods=['GET'])
+@csrf.exempt
+def combo_new_type():
+	pass
+
+
+@app.route('/group', methods=['GET'])
+@csrf.exempt
+def group_all():
+	pass
+
+@app.route('/group/<string:_id>', methods=['GET'])
+@csrf.exempt
+def group_info(_id):
+	pass
+
+@app.route('/group/<string:_id>/edit', methods=['GET'])
+@csrf.exempt
+def group_edit(_id):
+	pass
+
+@app.route('/group/combo/<string:_id>', methods=['GET'])
+@csrf.exempt
+def group_combo_list(_id):
+	pass
 
 
 if __name__ == "__main__":

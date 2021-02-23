@@ -1,8 +1,8 @@
 {% extends "base.html.j2" %}
 
 {% block content %}
-	<a href="/t/{{object['_id']}}"><h2 style="display:inline;">{{object['primary']}}</h2></a> 
-	<a href="/a/{{object['type']}}"><h4 style="display:inline;">({{object['symbolic']}})</h4></a>
+	<a href="/thing/{{object['_id']}}"><h2 style="display:inline;">{{object['primary']}}</h2></a> 
+	<a href="/asset/{{object['type']}}"><h4 style="display:inline;">({{object['symbolic']}})</h4></a>
 	<table>
 		{% for key, value in object.fields %}
 			<tr><td><b>{{key}}:</b> {{value}}</td></tr>

@@ -4,6 +4,7 @@ body {
 	margin: 0em;
 	background-color:black;
 	color:lime;
+	font-family: monospace;
 }
 
 header {
@@ -50,4 +51,10 @@ a:hover, a:active {
 
 hr {
 	border-color: lime;
+}
+
+pre {
+	color: lime;
+	font-family: monospace;
+	font-size: 1.5em;
 }

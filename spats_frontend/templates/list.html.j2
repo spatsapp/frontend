@@ -2,16 +2,8 @@
 
 {% block content %}
 	{% for object in objects %}
-		{# <a href="/t/{{object['_id']}}"><h1 style="display:inline;">{{object['primary']}}</h1></a> 
-		<a href="/a/{{object['type']}}"><h3 style="display:inline;">({{object['symbolic']}})</h3></a>
-		<table>
-			{% for key, value in object.fields %}
-				<tr><td><b>{{key}}:</b> {{value}}</td></tr>
-			{% endfor %}
-		</table> #}
-
-		<a href="/t/{{object['_id']}}"><h1 style="display:inline;">{{object['primary'][1]}}</h1></a> 
-		<a href="/a/{{object['type']}}"><h3 style="display:inline;">({{object['symbolic']}})</h3></a>
+		<a href="/thing/{{object['_id']}}"><h1 style="display:inline;">{{object['primary'][1]}}</h1></a> 
+		<a href="/asset/{{object['type']}}"><h3 style="display:inline;">({{object['symbolic']}})</h3></a>
 		<br />
 		{% if object['secondary'] is not none %}
 		<h4><b>{{object['secondary'][0]}}:</b> {{object['secondary'][1]}}</h4>
@@ -20,22 +12,6 @@
 		{% for key, value in object['tertiary'] %}
 		<h6 style="display:inline;"><b>{{key}}:</b> {{value}}</h6> {% if not loop.last %}|{% endif %}
 		{% endfor %}
-		{#
-		<a href="/t{{object['id']}}"><h1 style="display:inline;">{{object['primary']['val']}}</h1></a> 
-		<a href="/a{{object['type']}}"><h3 style="display:inline;">({{object['type']}})</h3></a>
-		{% for secondary in object['secondary'] %}
-			<h2>{{secondary['name']}}: {{secondary['val']}}</h2>
-		{% endfor %}
-
-		{% for tertiary in object['tertiary'] %}
-			<h3>{{tertiary['name']}}: {{tertiary['val']}}</h3>
-		{% endfor %}
-		<div class="row">
-		{% for other in object['other'] %}
-			<div class="col-2"><b>{{other['name']}}:</b> {{other['val']}}</div>
-		{% endfor %}
-		</div>
-		#}
 		<hr>
 	{% endfor %}
 {% endblock %}
