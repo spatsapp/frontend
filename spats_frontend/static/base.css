@@ -19,6 +19,10 @@ nav {
 	padding: 0.50em;
 	text-align: center;
 }
+nav div {
+	display: flex;
+	justify-content: space-between;
+}
 
 main {
 	padding: 0.50em;
@@ -50,4 +54,28 @@ hr {
 pre {
 	color: lime;
 	font-family: monospace;
+}
+
+ul li {
+	list-style-type: none;
+}
+
+table {
+	font-size: 1em;
+}
+
+table.list tr {
+	background-color: black;
+}
+
+tr:nth-child(even) {
+	background-color: #111111;
+}
+
+td {
+	padding: 0.5em;
+}
+
+.key {
+	text-align: right;
 }

@@ -1,35 +1,24 @@
 {% extends "base.html.j2" %}
 
-{% block css %}
-<style>
-table {
-	font-size: 1em;
-}
-td {
-	padding: 0.5em;
-}
-ul li {
-	list-style-type: none;
-}
-</style>
-{% endblock %}
-
 {% block content %}
 	<h2>{{object['name']}}</h2>
-	<table>
+	<table class="list">
 		<tr><td>Primary</td><td>{{object['primary']}}</td></tr>
 		<tr><td>Secondary</td><td>{{object['secondary']}}</td></tr>
 		<tr><td>Tertiary</td><td>{{object['tertiary']}}</td></tr>
 	</table>
 	<br />
-	<ol>
-	{% for field in object['fields'] %}
-	<li>{{field['name']}}</li>
-		<ul>
-			<li>Description: {{field['description']}}</li>
-			<li>Type: {{field['type']}}</li>
-			<li>Parameters: {{field['parameters']}}</li>
-		</ul>
-	{% endfor %}
-	</ol>
+
+	<table>
+		<tr><th class="key">Field</th><th style="text-align:center;">Type</th><th>Description</th><th>Parameters</th></tr>
+		{% for field in object['fields'] %}
+		<tr>
+			<td class="key">{{field['name']}}</td>
+			<td style="text-align:center;">{{field['type']}}</td>
+			<td>{{field['description']}}</td>
+			<td>{{field['parameters']}}</td>
+		</tr>
+		{% endfor %}
+	</table>
+
 {% endblock %}
