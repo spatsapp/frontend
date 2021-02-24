@@ -1,0 +1,18 @@
+{% extends "base.html.j2" %}
+
+
+{% block nav %}
+<br />
+<div>
+|<a href="/{{symbolic}}/new">New {{symbolic|capitalize}} Type</a>
+|
+</div>
+{% endblock %}
+
+{% block content %}
+	<ul style="list-style-type:none">
+	{% for id, name in documents %}
+		<li><a href="/{{symbolic}}/{{id}}">{{name}}</a></li>
+	{% endfor %}
+	</ul>
+{% endblock %}

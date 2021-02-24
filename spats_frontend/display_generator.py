@@ -53,24 +53,24 @@ class DisplayGenerator:
 			'symbolic': symbolic['name']
 		}
 
-	def thing_info(self, doc):
-		thing = doc['thing']
-		asset = doc['asset'][thing['type']]
-		return self._single_material(thing, asset)
+	def _material_info(self, doc, material_type, symbolic_type):
+		material = doc[material_type]
+		symbolic = doc[symbolic_type][material['type']]
+		return self._single_material(material, symbolic)
 
-	def thing_list(self, doc):
-		things = doc['thing']
-		res = []
-		for thing in things:
-			asset = doc['asset'][thing['type']]
-			cur = self._many_material(thing, asset)
-			res.append(cur)
-		return res
+	def _material_list(self, doc, material_type, symbolic_type):
+		materials = doc[material_type]
+		docs = []
+		for material in materials:
+			symbolic = doc['asset'][material['type']]
+			cur = self._many_material(material, symbolic)
+			docs.append(cur)
+		return docs
 
-	def asset_list(self, docs):
+	def _symbolic_list(self, docs):
 		return [(doc['_id'], doc['name']) for doc in docs]
 
-	def asset_info(self, doc):
+	def _symbolic_info(self, doc):
 		new_doc = {
 			'_id': doc['_id'],
 			'name': doc['name'],
@@ -90,3 +90,27 @@ class DisplayGenerator:
 			})
 		new_doc['fields'] = field_order
 		return new_doc
+
+	def asset_info(self, doc):
+		return self._symbolic_info(doc)
+
+	def asset_list(self, doc):
+		return self._symbolic_list(doc)
+
+	def thing_info(self, doc):
+		return self._material_info(doc, 'thing', 'asset')
+
+	def thing_list(self, doc):
+		return self._material_list(doc, 'thing', 'asset')
+
+	def combo_info(self, doc):
+		return self._symbolic_info(doc)
+
+	def combo_list(self, doc):
+		return self._symbolic_list(doc)
+
+	def group_info(self, doc):
+		return self._material_info(doc, 'group', 'combo')
+
+	def group_list(self, doc):
+		return self._material_list(doc, 'group', 'combo')

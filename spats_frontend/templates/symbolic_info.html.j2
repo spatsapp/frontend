@@ -1,0 +1,36 @@
+{% extends "base.html.j2" %}
+
+
+{% block nav %}
+<br />
+<div>
+|<a href="/{{symbolic}}/{{document['_id']}}">{{symbolic|capitalize}} Info</a>
+|<a href="/{{symbolic}}/{{document['_id']}}/edit">Edit {{symbolic|capitalize}}</a>
+|<a href="/{{symbolic}}/{{document['_id']}}/new">New {{material|capitalize}}</a>
+|<a href="/{{material}}/{{symbolic}}/{{document['_id']}}">{{symbolic|capitalize}} {{material|capitalize}}s</a>
+|
+</div>
+{% endblock %}
+
+{% block content %}
+	<h2>{{document['name']}}</h2>
+	<table class="list">
+		<tr><td>Primary</td><td>{{document['primary']}}</td></tr>
+		<tr><td>Secondary</td><td>{{document['secondary']}}</td></tr>
+		<tr><td>Tertiary</td><td>{{document['tertiary']}}</td></tr>
+	</table>
+	<br />
+
+	<table>
+		<tr><th class="key">Field</th><th style="text-align:center;">Type</th><th>Description</th><th>Parameters</th></tr>
+		{% for field in document['fields'] %}
+		<tr>
+			<td class="key">{{field['name']}}</td>
+			<td style="text-align:center;">{{field['type']}}</td>
+			<td>{{field['description']}}</td>
+			<td>{{field['parameters']}}</td>
+		</tr>
+		{% endfor %}
+	</table>
+
+{% endblock %}

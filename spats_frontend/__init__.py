@@ -35,14 +35,14 @@ def query_api():
 def asset_all():
 	raw = get(f'{database}/asset/all').json()
 	res = display.asset_list(raw)
-	return render_template('assets.html.j2', objects=res)
+	return render_template('symbolic_list.html.j2', documents=res, symbolic='asset', material='thing')
 
 @app.route('/asset/<string:_id>', methods=['GET'])
 @csrf.exempt
 def asset_info(_id):
 	raw = get(f'{database}/asset/{_id}').json()
 	res = display.asset_info(raw)
-	return render_template('asset.html.j2', object=res)
+	return render_template('symbolic_info.html.j2', document=res, symbolic='asset', material='thing')
 
 @app.route('/asset/<string:_id>/edit', methods=['GET'])
 @csrf.exempt
@@ -65,14 +65,14 @@ def asset_new_type():
 def thing_all():
 	raw = get(f'{database}/thing/all').json()
 	res = display.thing_list(raw)
-	return render_template('list.html.j2', objects=res)
+	return render_template('material_list.html.j2', documents=res, symbolic='asset', material='thing', symbolic_id=None)
 
 @app.route('/thing/<string:_id>', methods=['GET'])
 @csrf.exempt
 def thing_info(_id):
 	raw = get(f'{database}/thing/{_id}').json()
 	res = display.thing_info(raw)
-	return render_template('thing.html.j2', object=res)
+	return render_template('material_info.html.j2', document=res, symbolic='asset', material='thing')
 
 @app.route('/thing/<string:_id>/edit', methods=['GET'])
 @csrf.exempt
@@ -84,18 +84,22 @@ def thing_edit():
 def thing_asset_list(_id):
 	raw = get(f'{database}/thing/asset/{_id}').json()
 	res = display.thing_list(raw)
-	return render_template('list.html.j2', objects=res)
+	return render_template('material_list.html.j2', documents=res, symbolic='asset', material='thing', symbolic_id=_id)
 
 
 @app.route('/combo', methods=['GET'])
 @csrf.exempt
 def combo_all():
-	pass
+	raw = get(f'{database}/combo/all').json()
+	res = display.combo_list(raw)
+	return render_template('symbolic_list.html.j2', documents=res, symbolic='combo', material='group')
 
 @app.route('/combo/<string:_id>', methods=['GET'])
 @csrf.exempt
 def combo_info(_id):
-	pass
+	raw = get(f'{database}/combo/{_id}').json()
+	res = display.combo_info(raw)
+	return render_template('symbolic_info.html.j2', document=res, symbolic='combo', material='group')
 
 @app.route('/combo/<string:_id>/edit', methods=['GET'])
 @csrf.exempt
@@ -116,12 +120,16 @@ def combo_new_type():
 @app.route('/group', methods=['GET'])
 @csrf.exempt
 def group_all():
-	pass
+	raw = get(f'{database}/group/all').json()
+	res = display.combo_list(raw)
+	return render_template('material_list.html.j2', documents=res, symbolic='combo', material='group', symbolic_id=None)
 
 @app.route('/group/<string:_id>', methods=['GET'])
 @csrf.exempt
 def group_info(_id):
-	pass
+	raw = get(f'{database}/group/{_id}').json()
+	res = display.combo_info(raw)
+	return render_template('material_info.html.j2', document=res, symbolic='combo', material='group')
 
 @app.route('/group/<string:_id>/edit', methods=['GET'])
 @csrf.exempt
@@ -131,7 +139,9 @@ def group_edit(_id):
 @app.route('/group/combo/<string:_id>', methods=['GET'])
 @csrf.exempt
 def group_combo_list(_id):
-	pass
+	raw = get(f'{database}/group/combo/{_id}').json()
+	res = display.combo_list(raw)
+	return render_template('material_list.html.j2', documents=res, symbolic='combo', material='group', symbolic_id=_id)
 
 
 if __name__ == "__main__":

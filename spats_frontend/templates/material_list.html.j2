@@ -1,0 +1,27 @@
+{% extends "base.html.j2" %}
+
+{% block nav %}
+{% if symbolic_id is not none %}
+<br />
+<div>
+|<a href="/{{symbolic}}/{{symbolic_id}}">{{symbolic|capitalize}} Info</a>
+|<a href="/{{symbolic}}/{{symbolic_id}}/new">New {{document|capitalize}}</a>|
+</div>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+	{% for document in documents %}
+		<a href="/{{material}}/{{document['_id']}}"><h2 class="row">{{document['primary'][1]}}</h2></a> 
+		<a href="/{{material}}/{{symbolic}}/{{document['type']}}">({{document['symbolic']}})</a>
+		<br />
+		{% if document['secondary'] is not none %}
+		<h3 class="row"><b>{{document['secondary'][0]}}:</b> {{document['secondary'][1]}}</h3>
+		<br />
+		{% endif %}
+		{% for key, value in document['tertiary'] %}
+		<u>{{key}}</u> {{value}}{% if not loop.last %} |{% endif %}
+		{% endfor %}
+		<hr>
+	{% endfor %}
+{% endblock %}

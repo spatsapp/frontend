@@ -79,3 +79,7 @@ td {
 .key {
 	text-align: right;
 }
+
+.row {
+	display: inline;
+}

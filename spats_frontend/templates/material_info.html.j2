@@ -1,0 +1,22 @@
+{% extends "base.html.j2" %}
+
+{% block nav %}
+<br />
+<div>
+|<a href="/{{document}}/{{document['_id']}}">Thing Info</a>
+|<a href="/{{document}}/{{document['_id']}}/edit">Edit Thing</a>
+|
+</div>
+{% endblock %}
+
+{% block content %}
+	<div>
+	<a href="/{{document}}/{{document['_id']}}"><h2 class="row">{{document['primary']}}</h2></a> 
+	<a href="/{{symbolic}}/{{document['type']}}"><h4 class="row">({{document['symbolic']}})</h4></a>
+	</div>
+	<table>
+		{% for key, value in document.fields %}
+			<tr><td class="key"><b>{{key}}</b></td><td>{{value}}</td></tr>
+		{% endfor %}
+	</table>
+{% endblock %}

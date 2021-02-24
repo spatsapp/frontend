@@ -1,9 +1,0 @@
-{% extends "base.html.j2" %}
-
-{% block content %}
-	<ul style="list-style-type:none">
-	{% for id, name in objects %}
-		<li><a href="/asset/{{id}}">{{name}}</a></li>
-	{% endfor %}
-	</ul>
-{% endblock %}
