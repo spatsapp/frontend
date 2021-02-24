@@ -70,17 +70,18 @@ class DisplayGenerator:
 	def _symbolic_list(self, docs):
 		return [(doc['_id'], doc['name']) for doc in docs]
 
-	def _symbolic_info(self, doc):
+	def _symbolic_info(self, doc, symbolic_type):
+		symbolic = doc[symbolic_type]
 		new_doc = {
-			'_id': doc['_id'],
-			'name': doc['name'],
-			'primary': doc['primary'],
-			'secondary': doc['secondary'],
-			'tertiary': ', '.join(doc['tertiary']) if doc['tertiary'] else doc['tertiary']
+			'_id': symbolic['_id'],
+			'name': symbolic['name'],
+			'primary': symbolic['primary'],
+			'secondary': symbolic['secondary'],
+			'tertiary': ', '.join(symbolic['tertiary']) if symbolic['tertiary'] else symbolic['tertiary']
 		}
 		field_order = []
-		fields = doc['fields']
-		for key in doc['order']:
+		fields = symbolic['fields']
+		for key in symbolic['order']:
 			current = fields[key]
 			field_order.append({
 				'name': key,
@@ -92,7 +93,7 @@ class DisplayGenerator:
 		return new_doc
 
 	def asset_info(self, doc):
-		return self._symbolic_info(doc)
+		return self._symbolic_info(doc, 'asset')
 
 	def asset_list(self, doc):
 		return self._symbolic_list(doc)
@@ -104,7 +105,7 @@ class DisplayGenerator:
 		return self._material_list(doc, 'thing', 'asset')
 
 	def combo_info(self, doc):
-		return self._symbolic_info(doc)
+		return self._symbolic_info(doc, 'combo')
 
 	def combo_list(self, doc):
 		return self._symbolic_list(doc)
