@@ -4,6 +4,18 @@ class DisplayGenerator:
 	def __init__(self):
 		pass
 
+	def _fields_to_list(self, fields, order):
+		field_order = []
+		for key in order:
+			current = fields[key]
+			field_order.append({
+				'name': key,
+				'description': current['description'],
+				'parameters': current['parameters'],
+				'type': current['type']
+			})
+		return field_order
+
 	def _single_material(self, material, symbolic):
 		fields = material['fields']
 		primary = symbolic.get('primary')
@@ -72,25 +84,26 @@ class DisplayGenerator:
 
 	def _symbolic_info(self, doc, symbolic_type):
 		symbolic = doc[symbolic_type]
-		new_doc = {
+		return {
 			'_id': symbolic['_id'],
 			'name': symbolic['name'],
 			'primary': symbolic['primary'],
 			'secondary': symbolic['secondary'],
-			'tertiary': ', '.join(symbolic['tertiary']) if symbolic['tertiary'] else symbolic['tertiary']
+			'tertiary': ', '.join(symbolic['tertiary']) if symbolic['tertiary'] else symbolic['tertiary'],
+			'fields': self._fields_to_list(symbolic['fields'], symbolic['order'])
 		}
-		field_order = []
-		fields = symbolic['fields']
-		for key in symbolic['order']:
-			current = fields[key]
-			field_order.append({
-				'name': key,
-				'description': current['description'],
-				'parameters': current['parameters'],
-				'type': current['type']
-			})
-		new_doc['fields'] = field_order
-		return new_doc
+
+	def _symbolic_edit(self, doc, type_):
+		symbolic = doc[type_]
+		return {
+			'_id': symbolic['_id'],
+			'name': symbolic['name'],
+			'primary': symbolic['primary'],
+			'secondary': symbolic['secondary'],
+			'tertiary': symbolic['tertiary'],
+			'fields': self._fields_to_list(symbolic['fields'], symbolic['order'])
+		}
+
 
 	def asset_info(self, doc):
 		return self._symbolic_info(doc, 'asset')
@@ -98,17 +111,26 @@ class DisplayGenerator:
 	def asset_list(self, doc):
 		return self._symbolic_list(doc)
 
+	def asset_edit(self, doc):
+		return self._symbolic_edit(doc, 'asset')
+
+
 	def thing_info(self, doc):
 		return self._material_info(doc, 'thing', 'asset')
 
 	def thing_list(self, doc):
 		return self._material_list(doc, 'thing', 'asset')
 
+
 	def combo_info(self, doc):
 		return self._symbolic_info(doc, 'combo')
 
 	def combo_list(self, doc):
 		return self._symbolic_list(doc)
+
+	def combo_edit(self, doc):
+		return self._symbolic_edit(doc, 'combo')
+
 
 	def group_info(self, doc):
 		return self._material_info(doc, 'group', 'combo')

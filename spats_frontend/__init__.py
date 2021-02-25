@@ -47,7 +47,9 @@ def asset_info(_id):
 @app.route('/asset/<string:_id>/edit', methods=['GET'])
 @csrf.exempt
 def asset_edit(_id):
-	pass
+	raw = get(f'{database}/asset/{_id}').json()
+	res = display.asset_edit(raw)
+	return render_template('symbolic_edit.html.j2', document=res, symbolic='asset')
 
 @app.route('/asset/<string:_id>/new', methods=['GET'])
 @csrf.exempt
@@ -104,7 +106,9 @@ def combo_info(_id):
 @app.route('/combo/<string:_id>/edit', methods=['GET'])
 @csrf.exempt
 def combo_edit(_id):
-	pass
+	raw = get(f'{database}/combo/{_id}').json()
+	res = display.combo_edit(raw)
+	return render_template('symbolic_edit.html.j2', document=res, symbolic='combo')
 
 @app.route('/combo/<string:_id>/new', methods=['GET'])
 @csrf.exempt
