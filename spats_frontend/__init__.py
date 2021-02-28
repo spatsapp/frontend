@@ -1,4 +1,4 @@
-from flask import Flask, request, send_from_directory, render_template, redirect
+from flask import Flask, request, send_from_directory, render_template, redirect, jsonify
 from flask_wtf.csrf import CSRFProtect
 from requests import get, post, put, delete
 import dotenv
@@ -44,12 +44,15 @@ def asset_info(_id):
 	res = display.asset_info(raw)
 	return render_template('symbolic_info.html.j2', document=res, symbolic='asset', material='thing')
 
-@app.route('/asset/<string:_id>/edit', methods=['GET'])
+@app.route('/asset/<string:_id>/edit', methods=['GET', 'POST'])
 @csrf.exempt
 def asset_edit(_id):
-	raw = get(f'{database}/asset/{_id}').json()
-	res = display.asset_edit(raw)
-	return render_template('symbolic_edit.html.j2', document=res, symbolic='asset')
+	if request.method == 'GET':
+		raw = get(f'{database}/asset/{_id}').json()
+		res = display.asset_edit(raw)
+		return render_template('symbolic_edit.html.j2', document=res, symbolic='asset')
+	else:
+		return jsonify(request.form)
 
 @app.route('/asset/<string:_id>/new', methods=['GET'])
 @csrf.exempt
