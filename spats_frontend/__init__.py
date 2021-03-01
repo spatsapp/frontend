@@ -6,6 +6,7 @@ import dotenv
 from pprint import pformat
 
 from .display_generator import DisplayGenerator
+from .input_sanitizer import InputSanitizer
 
 app = Flask(__name__, static_url_path='')
 app.config.from_pyfile('frontend.cfg')
@@ -15,6 +16,7 @@ csrf.init_app(app)
 
 database = app.config['DATABASE']
 display = DisplayGenerator()
+sanitzer = InputSanitizer()
 
 @app.before_request
 def clear_trailing():
@@ -52,7 +54,8 @@ def asset_edit(_id):
 		res = display.asset_edit(raw)
 		return render_template('symbolic_edit.html.j2', document=res, symbolic='asset')
 	else:
-		return jsonify(request.form)
+		res = sanitzer.asset_edit(request.form)
+		return jsonify(res)
 
 @app.route('/asset/<string:_id>/new', methods=['GET'])
 @csrf.exempt
