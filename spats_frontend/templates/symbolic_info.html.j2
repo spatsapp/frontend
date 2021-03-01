@@ -28,7 +28,15 @@
 			<td class="key">{{field['name']}}</td>
 			<td style="text-align:center;">{{field['type']}}</td>
 			<td>{{field['description']}}</td>
-			<td>{{field['parameters']}}</td>
+			<td>
+				{% if field['parameters'] %}
+					{% for key, value in field['parameters'].items() %}
+						{{key | replace("_", " ") |title}}: {{value}}<br />
+					{% endfor %}
+				{% else %}
+				{{field['parameters']}}
+				{% endif %}
+			</td>
 		</tr>
 		{% endfor %}
 	</table>
