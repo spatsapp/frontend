@@ -4,7 +4,7 @@ class DisplayGenerator:
 	def __init__(self):
 		pass
 
-	def _fields_to_list(self, fields, order):
+	def _fields_to_list(self, fields, order, _id):
 		field_order = []
 		for key in order:
 			current = fields[key]
@@ -12,7 +12,9 @@ class DisplayGenerator:
 				'name': key,
 				'description': current['description'],
 				'parameters': current['parameters'],
-				'type': current['type']
+				'type': current['type'],
+				'inherited': _id != current['origin'],
+				'origin': current['origin']
 			})
 		return field_order
 
@@ -90,7 +92,7 @@ class DisplayGenerator:
 			'primary': symbolic['primary'],
 			'secondary': symbolic['secondary'],
 			'tertiary': ', '.join(symbolic['tertiary']) if symbolic['tertiary'] else symbolic['tertiary'],
-			'fields': self._fields_to_list(symbolic['fields'], symbolic['order'])
+			'fields': self._fields_to_list(symbolic['fields'], symbolic['order'], symbolic['_id'])
 		}
 
 	def _symbolic_edit(self, doc, type_):
@@ -100,8 +102,8 @@ class DisplayGenerator:
 			'name': symbolic['name'],
 			'primary': symbolic['primary'],
 			'secondary': symbolic['secondary'],
-			'tertiary': symbolic['tertiary'],
-			'fields': self._fields_to_list(symbolic['fields'], symbolic['order'])
+			'tertiary': ', '.join(symbolic['tertiary']) if symbolic['tertiary'] else symbolic['tertiary'],
+			'fields': self._fields_to_list(symbolic['fields'], symbolic['order'], symbolic['_id'])
 		}
 
 

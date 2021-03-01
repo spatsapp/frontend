@@ -94,9 +94,21 @@
 			{% set params = field['parameters'] %}
 			<tr>
 				<td>
-					<input type="text" id="{{field['name']}}_name" name="{{field['name']}}_name" value="{{field['name']}}" />
+					{% if field['inherited'] %}
+					<a href="/asset/{{field['origin']}}"><u>{{field['name']}}</u></a>
+					{% else %}
+					<input
+						type="text"
+						id="{{field['name']}}_name"
+						name="{{field['name']}}_name"
+						value="{{field['name']}}"
+					/>
+					{% endif %}
 				</td>
 				<td>
+					{% if field['inherited'] %}
+					{{field['type']|capitalize}}
+					{% else %}
 					<select class="type_select" id="{{field['name']}}_type" name="{{field['name']}}_type" >
 						<option value="boolean" {% if field['type'] == "boolean" %}selected{% endif %}>Boolean</option>
 						<option value="string" {% if field['type'] == "string" %}selected{% endif %}>String</option>
@@ -106,13 +118,21 @@
 						<option value="list" {% if field['type'] == "list" %}selected{% endif %}>List</option>
 						<option value="reference" {% if field['type'] == "reference" %}selected{% endif %}>Reference</option>
 					</select>
+					{% endif %}
 				</td>
 				<td>
+					{% if field['inherited'] %}
+					{{field['description']}}
+					{% else %}
 					<textarea id="{{field['name']}}_description" name="{{field['name']}}_description" >{{field['description']}}</textarea>
+					{% endif %}
 				</td>
 			</tr>
 			<tr class="param_row">
 				<td>
+					{% if field['inherited'] %}
+					Required: {% if params['required'] is defined %}{{params['required']}}{% else %}False{% endif %}
+					{% else %}
 					<input
 						type="checkbox"
 						id="{{field['name']}}_required_active"
@@ -126,8 +146,12 @@
 						name="{{field['name']}}_required"
 						{% if params['required'] %}checked{% endif %}
 					/>
+					{% endif %}
 				</td>
 				<td>
+					{% if field['inherited'] %}
+					Unique: {% if params['unique'] is defined %}{{params['unique']}}{% else %}False{% endif %}
+					{% else %}
 					<input
 						type="checkbox"
 						id="{{field['name']}}_unique_active"
@@ -141,8 +165,12 @@
 						name="{{field['name']}}_unique"
 						{% if params['unique'] %}checked{% endif %}
 					/>
+					{% endif %}
 				</td>
 				<td>
+					{% if field['inherited'] %}
+					Default: {% if params['default'] is defined %}{{params['default']}}{% else %}<i>N/A</i>{% endif %}
+					{% else %}
 					<input
 						type="checkbox"
 						id="{{field['name']}}_default_active"
@@ -156,10 +184,14 @@
 						name="{{field['name']}}_default"
 						value="{{params['default']}}"
 					/>
+					{% endif %}
 				</td>
 			</tr>
 			<tr class="param_row" id="{{field['name']}}_param_string" {% if field['type'] != 'string' %}hidden{% endif %}>
 				<td>
+					{% if field['inherited'] %}
+					Min Length: {% if params['min_length'] is defined %}{{params['min_length']}}{% else %}<i>N/A</i>{% endif %}
+					{% else %}
 					<input
 						type="checkbox"
 						id="{{field['name']}}_minlength_active"
@@ -174,8 +206,12 @@
 						step="any"
 						value="{{params['min_length']}}"
 					/>
+					{% endif %}
 				</td>
 				<td>
+					{% if field['inherited'] %}
+					Max Length: {% if params['max_length'] is defined %}{{params['max_length']}}{% else %}<i>N/A</i>{% endif %}
+					{% else %}
 					<input
 						type="checkbox"
 						id="{{field['name']}}_maxlength_active"
@@ -190,11 +226,15 @@
 						step="any"
 						value="{{params['max_length']}}"
 					/>
+					{% endif %}
 				</td>
 				<td></td>
 			</tr>
 			<tr class="param_row" id="{{field['name']}}_param_integer" {% if field['type'] != 'integer' %}hidden{% endif %}>
 				<td>
+					{% if field['inherited'] %}
+					Min Value: {% if params['min_value'] is defined %}{{params['min_value']}}{% else %}<i>N/A</i>{% endif %}
+					{% else %}
 					<input
 						type="checkbox"
 						id="{{field['name']}}_minvalue_active"
@@ -209,8 +249,12 @@
 						step="1"
 						value="{{params['min_value']}}"
 					/>
+					{% endif %}
 				</td>
 				<td>
+					{% if field['inherited'] %}
+					Max Value: {% if params['max_value'] is defined %}{{params['max_value']}}{% else %}<i>N/A</i>{% endif %}
+					{% else %}
 					<input
 						type="checkbox"
 						id="{{field['name']}}_maxvalue_active"
@@ -225,11 +269,15 @@
 						step="1"
 						value="{{params['max_value']}}"
 					/>
+					{% endif %}
 				</td>
 				<td></td>
 			</tr>
 			<tr class="param_row" id="{{field['name']}}_param_decimal" {% if field['type'] != 'decimal' %}hidden{% endif %}>
 				<td>
+					{% if field['inherited'] %}
+					Min Value: {% if params['min_value'] is defined %}{{params['min_value']}}{% else %}<i>N/A</i>{% endif %}
+					{% else %}
 					<input
 						type="checkbox"
 						id="{{field['name']}}_minvalue_active"
@@ -244,8 +292,12 @@
 						step="1"
 						value="{{params['min_value']}}"
 					/>
+					{% endif %}
 				</td>
 				<td>
+					{% if field['inherited'] %}
+					Max Value: {% if params['max_value'] is defined %}{{params['max_value']}}{% else %}<i>N/A</i>{% endif %}
+					{% else %}
 					<input
 						type="checkbox"
 						id="{{field['name']}}_maxvalue_active"
@@ -260,8 +312,12 @@
 						step="1"
 						value="{{params['max_value']}}"
 					/>
+					{% endif %}
 				</td>
 				<td>
+					{% if field['inherited'] %}
+					Precision: {% if params['precision'] is defined %}{{params['precision']}}{% else %}<i>N/A</i>{% endif %}
+					{% else %}
 					<input
 						type="checkbox"
 						id="{{field['name']}}_precision_active"
@@ -276,10 +332,14 @@
 						step="1"
 						value="{{params['precision']}}"
 					/>
+					{% endif %}
 				</td>
 			</tr>
 			<tr class="param_row" id="{{field['name']}}_param_date" {% if field['type'] != 'date' %}hidden{% endif %}>
 				<td>
+					{% if field['inherited'] %}
+					Min Value: {% if params['min_value'] is defined %}{{params['min_value']}}{% else %}<i>N/A</i>{% endif %}
+					{% else %}
 					<input
 						type="checkbox"
 						id="{{field['name']}}_minvalue_active"
@@ -294,8 +354,12 @@
 						step="1"
 						value="{{params['min_value']}}"
 					/>
+					{% endif %}
 				</td>
 				<td>
+					{% if field['inherited'] %}
+					Max Value: {% if params['max_value'] is defined %}{{params['max_value']}}{% else %}<i>N/A</i>{% endif %}
+					{% else %}
 					<input
 						type="checkbox"
 						id="{{field['name']}}_maxvalue_active"
@@ -310,8 +374,12 @@
 						step="1"
 						value="{{params['max_value']}}"
 					/>
+					{% endif %}
 				</td>
 				<td>
+					{% if field['inherited'] %}
+					Date Format: {% if params['date_format'] is defined %}{{params['date_format']}}{% else %}<i>N/A</i>{% endif %}
+					{% else %}
 					<input
 						type="checkbox"
 						id="{{field['name']}}_dateformat_active"
@@ -325,10 +393,14 @@
 						name="{{field['name']}}_dateformat"
 						value="{{params['date_format']}}"
 					/>
+					{% endif %}
 				</td>
 			</tr>
 			<tr class="param_row" id="{{field['name']}}_param_list" {% if field['type'] != 'list' %}hidden{% endif %}>
 				<td>
+					{% if field['inherited'] %}
+					List Type: {% if params['list_type'] is defined %}{{params['list_type']}}{% else %}<i>N/A</i>{% endif %}
+					{% else %}
 					<input
 						type="checkbox" 
 						id="{{field['name']}}_listtype_active"
@@ -345,8 +417,12 @@
 						<option value="date" {% if params['list_type'] == "date" %}selected{% endif %}>Date</option>
 						<option value="reference" {% if params['list_type'] == "reference" %}selected{% endif %}>Reference</option>
 					</select>
+					{% endif %}
 				</td>
 				<td>
+					{% if field['inherited'] %}
+					Ordered: {% if params['ordered'] is defined %}{{params['ordered']}}{% else %}<i>N/A</i>{% endif %}
+					{% else %}
 					<input
 						type="checkbox"
 						id="{{field['name']}}_ordered_active"
@@ -360,20 +436,17 @@
 						name="{{field['name']}}_ordered"
 						{% if params['ordered'] %}checked{% endif %}
 					/>
+					{% endif %}
 				</td>
 				<td></td>
 			</tr>
 			{% endfor %}
 		</table>
 		<br />
-		<label for="primary">Primary: <input style="width:auto;" type="text" id="primary" value="{{document['primary']}}"></label>
-		<label for="secondary">Secondary: <input style="width:auto;" type="text" id="secondary" value="{{document['secondary']}}"></label>
+		<label for="primary">Primary: <input style="width:auto;" type="text" id="primary" name="primary" value="{{document['primary']}}"></label>
+		<label for="secondary">Secondary: <input style="width:auto;" type="text" id="secondary" name="secondary" value="{{document['secondary']}}"></label>
 		<br /><br />
-		<label for="tertiary">Tertiary<select style="width:100%" id="tertiary" multiple>
-		{% for field in document['fields'] %}
-			<option value="{{field['name']}}" {% if field['name'] in document['tertiary'] %}selected{% endif %}>{{field['name']}}</option>
-		{% endfor %}
-		</select></label>
+		<label for="tertiary">Tertiary: <input style="width:auto;" type="text" id="tertiary" name="tertiary" value="{{document['tertiary']}}"></label>
 		<br /><br />
 		<button><h3>Update</h3></button>
 	</form>
