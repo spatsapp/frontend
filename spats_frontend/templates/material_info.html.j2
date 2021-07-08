@@ -3,15 +3,15 @@
 {% block nav %}
 <br />
 <div>
-|<a href="/{{document}}/{{document['_id']}}">Thing Info</a>
-|<a href="/{{document}}/{{document['_id']}}/edit">Edit Thing</a>
+|<a href="/{{material}}/{{document['_id']}}">Thing Info</a>
+|<a href="/{{material}}/{{document['_id']}}/edit">Edit Thing</a>
 |
 </div>
 {% endblock %}
 
 {% block content %}
 	<div>
-	<a href="/{{document}}/{{document['_id']}}"><h2 class="row">{{document['primary']}}</h2></a> 
+	<a href="/{{material}}/{{document['_id']}}"><h2 class="row">{{document['primary']}}</h2></a> 
 	<a href="/{{symbolic}}/{{document['type']}}"><h4 class="row">({{document['symbolic']}})</h4></a>
 	</div>
 	<table>

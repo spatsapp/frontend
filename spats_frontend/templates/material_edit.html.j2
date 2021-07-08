@@ -1,0 +1,184 @@
+{% extends "base.html.j2" %}
+
+{% block css %}
+<style>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    tr:nth-child(even) {
+        background-color: black;
+    }
+
+    input {
+        background-color: inherit;
+        color: lime;
+        border: 0;
+        border-bottom: 1px solid lime;
+        width: 100%;
+        font-size: 1em;
+    }
+
+    textarea {
+        background-color: inherit;
+        color: lime;
+        border: 1px solid lime;
+        width: 100%;
+        height: 5em;
+        font-size: 1em;
+        padding: 0.25em;
+    }
+
+    tr.param_row,th.param_row {
+        background-color: #111111;
+    }
+
+    tr.param_row input,select {
+        border: 0;
+        border-bottom: 1px solid lime;
+    }
+
+    tr.param_row select,option {
+        border-bottom: 1px solid lime;
+        background-color: #111111;
+    }
+
+    select,option {
+        color: inherit;
+        background-color: black;
+        font-size: inherit;
+        border: 0;
+
+    }
+
+    option:checked {
+        background-color: #111111;
+    }
+
+    button {
+        color: inherit;
+        background-color: inherit;
+        font-size: inherit;
+        border: 1px solid lime;
+        width: 100%;
+    }
+
+    input[type="checkbox"] {
+        width: auto;
+        margin-left: 0.5em;
+    }
+
+    input {
+        width: 100%;
+    }
+
+    .required:after {
+        content:" *";
+        color: red;
+    }
+</style>
+{% endblock css %}
+
+{% block js %}
+<script type="text/javascript" src="{{ url_for('static', filename='material_edit.js') }}" defer></script>
+{% endblock js %}
+
+
+{% block content %}
+    {% if error is defined %}
+        {{error|safe}}
+    {% endif %}
+
+    <form action="/{{material}}/{{document['_id']}}/edit" method="POST">
+        <table>
+        <tr>
+            <th style="text-align:center;">Field</th>
+            <th style="text-align:center;">Value</th>
+        </tr>
+        {% for field in document['fields'] %}
+            {% set parameters = field["parameters"] %}
+            {% set required = (parameters and "required" in parameters and parameters["required"]) %}
+            <tr>
+                <td>{{field["name"]}} {% if required %}<span style="color:red">*</span>{% endif %}</td>
+                <td>
+                {% if field['type'] == "boolean" %}
+                    <input
+                        type="checkbox"
+                        id="{{field['name']}}"
+                        name="{{field['name']}}"
+                        value="{{field['name']}}"
+                        {% if field['value'] %}checked{% endif %}
+                        {% if required %}required{% endif %}
+                    />
+
+                {% elif field['type'] == "string" %}
+                    <input
+                        type="text"
+                        id="{{field['name']}}"
+                        name="{{field['name']}}"
+                        value="{{field['value']}}"
+                        {% if required %}required{% endif %}
+                    />
+
+                {% elif field['type'] == "integer" %}
+                    <input
+                        type="number"
+                        id="{{field['name']}}"
+                        name="{{field['name']}}"
+                        value="{{field['value']}}"
+                        step="1"
+                        {% if "min" in parameters %}min="{{parameters['min_value']}}"{% endif %}
+                        {% if "max" in parameters %}max="{{parameters['max_value']}}"{% endif %}
+                        {% if required %}required{% endif %}
+                    />
+
+                {% elif field['type'] == "decimal" %}
+                    <input
+                        type="number"
+                        id="{{field['name']}}"
+                        name="{{field['name']}}"
+                        value="{{field['value']}}"
+                        step="0.{{'0'*((parameters['precision']|int)-1)}}1"
+                        {% if "min" in parameters %}min="{{parameters['min_value']}}"{% endif %}
+                        {% if "max" in parameters %}max="{{parameters['max_value']}}"{% endif %}
+                        {% if required %}required{% endif %}
+                    />
+
+                {% elif field['type'] == "date" %}
+                    {% if parameters['date_format'] in ["%y", "%Y"] %}
+                        <input
+                            type="text"
+                            id="{{field['name']}}"
+                            name="{{field['name']}}"
+                            value="{{field['value']}}"
+                            pattern="[0-9]{% if parameters['date_format'] == '%y' %}{2}{% else %}{4}{% endif %}"
+                        {% if required %}required{% endif %}
+                        />
+                    {% else %}
+                        <input
+                            type="date"
+                            id="{{field['name']}}"
+                            name="{{field['name']}}"
+                            value="{{field['value']}}"
+                        {% if required %}required{% endif %}
+                        />
+                    {% endif %}
+
+                {% elif field['type'] == "list" %}
+                    <input
+                        type="string"
+                        id="{{field['name']}}"
+                        name="{{field['name']}}"
+                        value="{{field['value']|join(', ')}}"
+                        {% if required %}required{% endif %}
+                    />
+                {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        <br />
+        <button><h3>Update</h3></button>
+    </form>
+{% endblock %}
