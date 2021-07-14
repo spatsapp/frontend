@@ -11,6 +11,8 @@ class InputSanitizer:
 
     @staticmethod
     def _parse_user_csv(value):
+        if isinstance(value, list):
+            return value
         string = StringIO(value)
         csv_reader = reader(
             string,
@@ -63,7 +65,7 @@ class InputSanitizer:
         new = {"type": original["type"], "fields": {}}
         for field in original["fields"]:
             name = field["name"]
-            value = form[name]
+            value = form.get(name, '')
             if value != '':
                 if field["type"] == "list":
                     value = self._parse_user_csv(value)
