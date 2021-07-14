@@ -3,8 +3,8 @@
 {% block nav %}
 <br />
 <div>
-|<a href="/{{material}}/{{document['_id']}}">Thing Info</a>
-|<a href="/{{material}}/{{document['_id']}}/edit">Edit Thing</a>
+|<a href="/{{material}}/{{document['_id']}}">{{material|title}} Info</a>
+|<a href="/{{material}}/{{document['_id']}}/edit">Edit {{material|title}}</a>
 |
 </div>
 {% endblock %}

@@ -29,7 +29,8 @@ class InputSanitizer:
             temp[value[key]] = value
         return temp
 
-    def _material_edit(self, original, form):
+    def material_edit(self, original, form):
+        """Edit a material object"""
         new = {"_id": original["_id"], "type": original["type"]}
         for field in original["fields"]:
             name = field["name"]
@@ -57,7 +58,8 @@ class InputSanitizer:
                     }
         return new if "fields" in new or "unset" in new else {}
 
-    def _material_new(self, original, form):
+    def material_new(self, original, form):
+        """Create new material object"""
         new = {"type": original["type"], "fields": {}}
         for field in original["fields"]:
             name = field["name"]
@@ -74,7 +76,8 @@ class InputSanitizer:
                 }
         return new
 
-    def _symbolic_edit(self, original, form):
+    def symbolic_edit(self, original, form):
+        """Edit a symbolic object"""
         new = {"_id": original["_id"], "fields": {}}
         if form["primary"] != original["primary"]:
             new["primary"] = form["primary"]
@@ -132,15 +135,3 @@ class InputSanitizer:
                         new["unset"][name] = {"parameters": {}}
                     new["unset"][name]["parameters"][full] = ""
         return new
-
-    def asset_edit(self, original, form):
-        """Edit asset"""
-        return self._symbolic_edit(original, form)
-
-    def thing_edit(self, original, form):
-        """Edit thing"""
-        return self._material_edit(original, form)
-
-    def thing_new(self, original, form):
-        """New thing"""
-        return self._material_new(original, form)

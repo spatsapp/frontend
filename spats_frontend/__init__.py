@@ -85,7 +85,7 @@ def asset_edit(_id):
             document=res,
             symbolic="asset",
         )
-    sanitized = sanitzer.asset_edit(res, request.form)
+    sanitized = sanitzer.symbolic_edit(res, request.form)
     update = put(f"{database}/asset/update", json=sanitized).json()
     if update["errored"]:
         return render_template(
@@ -110,7 +110,7 @@ def asset_new_thing(_id):
             symbolic="asset",
             material="thing",
         )
-    sanitized = sanitzer.thing_new(res, request.form)
+    sanitized = sanitzer.material_new(res, request.form)
     new = post(f"{database}/thing/create", json=sanitized).json()
     if new["errored"]:
         return render_template(
@@ -170,7 +170,7 @@ def thing_edit(_id):
             symbolic="asset",
             material="thing",
         )
-    sanitized = sanitzer.thing_edit(res, request.form)
+    sanitized = sanitzer.material_edit(res, request.form)
     update = put(f"{database}/thing/update", json=sanitized).json()
     if update["errored"]:
         return render_template(
@@ -239,10 +239,30 @@ def combo_edit(_id):
     )
 
 
-@app.route("/combo/<string:_id>/new", methods=["GET"])
+@app.route("/combo/<string:_id>/new", methods=["GET", "POST"])
 @csrf.exempt
-def combo_new_thing(_id):
+def combo_new_group(_id):
     """Create group for combo"""
+    raw = get(f"{database}/combo/{_id}").json()
+    res = display.group_new(raw)
+    if request.method == "GET":
+        return render_template(
+            "material_new.html.j2",
+            document=res,
+            symbolic="combo",
+            material="group",
+        )
+    sanitized = sanitzer.material_new(res, request.form)
+    new = post(f"{database}/group/create", json=sanitized).json()
+    if new["errored"]:
+        return render_template(
+            "material_new.html.j2",
+            document=res,
+            symbolic="combo",
+            material="group",
+            error=new["errored"],
+        )
+    return redirect(f"/group/{new['created'][0]}")
 
 
 @app.route("/combo/new", methods=["GET"])
@@ -280,10 +300,30 @@ def group_info(_id):
     )
 
 
-@app.route("/group/<string:_id>/edit", methods=["GET"])
+@app.route("/group/<string:_id>/edit", methods=["GET", "POST"])
 @csrf.exempt
 def group_edit(_id):
     """Edit group"""
+    raw = get(f"{database}/group/{_id}").json()
+    res = display.group_edit(raw)
+    if request.method == "GET":
+        return render_template(
+            "material_edit.html.j2",
+            document=res,
+            symbolic="combo",
+            material="group",
+        )
+    sanitized = sanitzer.material_edit(res, request.form)
+    update = put(f"{database}/group/update", json=sanitized).json()
+    if update["errored"]:
+        return render_template(
+            "material_edit.html.j2",
+            document=res,
+            symbolic="combo",
+            material="group",
+            error=update["errored"],
+        )
+    return redirect(f"/group/{_id}")
 
 
 @app.route("/group/combo/<string:_id>", methods=["GET"])

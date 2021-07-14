@@ -224,3 +224,11 @@ class DisplayGenerator:
     def group_list(self, doc):
         """List group"""
         return self._material_list(doc, "group", "combo")
+
+    def group_edit(self, doc):
+        """Edit group"""
+        return self._material_edit(doc, "group", "combo")
+
+    def group_new(self, doc):
+        """Create new group"""
+        return self._material_new(doc, "combo")
