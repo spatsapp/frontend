@@ -115,12 +115,32 @@ class DisplayGenerator:
 
         return {
             "_id": material["_id"],
+            "type": symbolic_id,
             "fields": self._material_fields_to_list(
                 material["fields"],
                 symbolic["fields"],
                 symbolic["order"],
                 symbolic_id,
             ),
+        }
+
+    @staticmethod
+    def _material_new(doc, type_):
+        symbolic = doc[type_]
+        fields = []
+        for field in symbolic["order"]:
+            value = symbolic["fields"][field]
+            fields.append({
+                "name": field,
+                "description": value["description"],
+                "parameters": value["parameters"],
+                "type": value["type"],
+            })
+
+        return {
+            "type": symbolic["_id"],
+            "name": symbolic["name"],
+            "fields": fields
         }
 
     @staticmethod
@@ -180,6 +200,10 @@ class DisplayGenerator:
     def thing_edit(self, doc):
         """Edit thing"""
         return self._material_edit(doc, "thing", "asset")
+
+    def thing_new(self, doc):
+        """Create new thing"""
+        return self._material_new(doc, "asset")
 
     def combo_info(self, doc):
         """Get combo info"""

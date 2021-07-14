@@ -92,16 +92,35 @@ def asset_edit(_id):
             "symbolic_edit.html.j2",
             document=res,
             symbolic="asset",
-            errors=update["errored"],
+            error=update["errored"],
         )
     return redirect(f"/asset/{_id}")
 
 
-@app.route("/asset/<string:_id>/new", methods=["GET"])
+@app.route("/asset/<string:_id>/new", methods=["GET", "POST"])
 @csrf.exempt
 def asset_new_thing(_id):
     """Create new thing for asset"""
-
+    raw = get(f"{database}/asset/{_id}").json()
+    res = display.thing_new(raw)
+    if request.method == "GET":
+        return render_template(
+            "material_new.html.j2",
+            document=res,
+            symbolic="asset",
+            material="thing",
+        )
+    sanitized = sanitzer.thing_new(res, request.form)
+    new = post(f"{database}/thing/create", json=sanitized).json()
+    if new["errored"]:
+        return render_template(
+            "material_new.html.j2",
+            document=res,
+            symbolic="asset",
+            material="thing",
+            error=new["errored"],
+        )
+    return redirect(f"/thing/{new['created'][0]}")
 
 @app.route("/asset/new", methods=["GET"])
 @csrf.exempt
@@ -159,7 +178,7 @@ def thing_edit(_id):
             document=res,
             symbolic="asset",
             material="thing",
-            errors=update["errored"],
+            error=update["errored"],
         )
     return redirect(f"/thing/{_id}")
 

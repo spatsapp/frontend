@@ -2,21 +2,76 @@
 
 {% block css %}
 <style>
-input {
-  width: 20%;
-  margin: 0.50em;
-  font-size: 1.5em;
-}
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
 
-textarea {
-  width: 20%;
-  margin: 0.50em;
-  font-size: 1.5em;
-}
+    tr:nth-child(even) {
+        background-color: black;
+    }
 
-label {
-  font-size: 1.5em;
-}
+    input {
+        background-color: inherit;
+        color: lime;
+        border: 0;
+        border-bottom: 1px solid lime;
+        width: 100%;
+        font-size: 1em;
+    }
+
+    textarea {
+        background-color: inherit;
+        color: lime;
+        border: 1px solid lime;
+        width: 100%;
+        height: 5em;
+        font-size: 1em;
+        padding: 0.25em;
+    }
+
+    tr.param_row,th.param_row {
+        background-color: #111111;
+    }
+
+    tr.param_row input,select {
+        border: 0;
+        border-bottom: 1px solid lime;
+    }
+
+    tr.param_row select,option {
+        border-bottom: 1px solid lime;
+        background-color: #111111;
+    }
+
+    select,option {
+        color: inherit;
+        background-color: black;
+        font-size: inherit;
+        border: 0;
+
+    }
+
+    option:checked {
+        background-color: #111111;
+    }
+
+    button {
+        color: inherit;
+        background-color: inherit;
+        font-size: inherit;
+        border: 1px solid lime;
+        width: 100%;
+    }
+
+    input[type="checkbox"] {
+        width: auto;
+        margin-left: 0.5em;
+    }
+
+    input {
+        width: 100%;
+    }
 </style>
 {% endblock %}
 
@@ -25,5 +80,102 @@ label {
       {{error|safe}}
    {% endif %}
 
-   {{form|safe}}
+    <form action="/{{symbolic}}/{{document['type']}}/new" method="POST">
+        <table>
+        <tr>
+            <th style="text-align:center;">Field</th>
+            <th style="text-align:center;">Value</th>
+        </tr>
+        {% for field in document['fields'] %}
+            {% set parameters = field["parameters"] %}
+            {% set required = (parameters and "required" in parameters and parameters["required"]) %}
+            {% if parameters and "default" in parameters %}
+                {% set default = parameters["default"] %}
+            {% else %}
+                {% set default = '' %}
+            {% endif %}
+            <tr>
+                <td>{{field["name"]}} {% if required %}<span style="color:red">*</span>{% endif %}</td>
+                <td>
+                {% if field['type'] == "boolean" %}
+                    <input
+                        type="checkbox"
+                        id="{{field['name']}}"
+                        name="{{field['name']}}"
+                        value="{{field['name']}}"
+                        {% if default %}checked{% endif %}
+                        {% if required %}required{% endif %}
+                    />
+
+                {% elif field['type'] == "string" %}
+                    <input
+                        type="text"
+                        id="{{field['name']}}"
+                        name="{{field['name']}}"
+                        value="{{default}}"
+                        {% if required %}required{% endif %}
+                    />
+
+                {% elif field['type'] == "integer" %}
+                    <input
+                        type="number"
+                        id="{{field['name']}}"
+                        name="{{field['name']}}"
+                        value="{{default}}"
+                        step="1"
+                        {% if "min" in parameters %}min="{{parameters['min_value']}}"{% endif %}
+                        {% if "max" in parameters %}max="{{parameters['max_value']}}"{% endif %}
+                        {% if required %}required{% endif %}
+                    />
+
+                {% elif field['type'] == "decimal" %}
+                    <input
+                        type="number"
+                        id="{{field['name']}}"
+                        name="{{field['name']}}"
+                        value="{{default}}"
+                        step="0.{{'0'*((parameters['precision']|int)-1)}}1"
+                        {% if "min" in parameters %}min="{{parameters['min_value']}}"{% endif %}
+                        {% if "max" in parameters %}max="{{parameters['max_value']}}"{% endif %}
+                        {% if required %}required{% endif %}
+                    />
+
+                {% elif field['type'] == "date" %}
+                    {% if parameters['date_format'] in ["%y", "%Y"] %}
+                        <input
+                            type="text"
+                            id="{{field['name']}}"
+                            name="{{field['name']}}"
+                            value="{{default}}"
+                            pattern="[0-9]{% if parameters['date_format'] == '%y' %}{2}{% else %}{4}{% endif %}"
+                        {% if required %}required{% endif %}
+                        />
+                    {% else %}
+                        <input
+                            type="date"
+                            id="{{field['name']}}"
+                            name="{{field['name']}}"
+                            value="{{default}}"
+                        {% if required %}required{% endif %}
+                        />
+                    {% endif %}
+
+                {% elif field['type'] == "list" %}
+                    <input
+                        type="string"
+                        id="{{field['name']}}"
+                        name="{{field['name']}}"
+                        value="{{default|join(', ')}}"
+                        {% if required %}required{% endif %}
+                    />
+                {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        <br />
+        <button><h3>Create</h3></button>
+    </form>
+
+    {{document}}
 {% endblock %}

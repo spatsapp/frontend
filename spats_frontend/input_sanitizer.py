@@ -30,19 +30,45 @@ class InputSanitizer:
         return temp
 
     def _material_edit(self, original, form):
-        new = {"_id": original["_id"], "fields": {}}
+        new = {"_id": original["_id"], "type": original["type"]}
         for field in original["fields"]:
             name = field["name"]
-            temp = form[name]
-            if field["type"] == "list":
-                temp = self._parse_user_csv(temp)
-                if field.get("parameters", {}).get("ordered", False):
-                    temp.sort()
-                if field["value"] == "":
-                    field["value"] = []
-            if field["value"] != temp:
+            value = form[name]
+            if value != '':
+                if field["type"] == "list":
+                    value = self._parse_user_csv(value)
+                    if field.get("parameters", {}).get("ordered", False):
+                        value.sort()
+                    if field["value"] == "":
+                        field["value"] = []
+            if field["value"] != value:
+                if value == '':
+                    if "unset" not in new:
+                        new["unset"] = {}
+                    new["unset"][name] = ''
+                else:
+                    if "fields" not in new:
+                        new["fields"] = {}
+
+                    new["fields"][name] = {
+                        "value": value,
+                        "type": field["type"],
+                        "parameters": field["parameters"],
+                    }
+        return new if "fields" in new or "unset" in new else {}
+
+    def _material_new(self, original, form):
+        new = {"type": original["type"], "fields": {}}
+        for field in original["fields"]:
+            name = field["name"]
+            value = form[name]
+            if value != '':
+                if field["type"] == "list":
+                    value = self._parse_user_csv(value)
+                    if field.get("parameters", {}).get("ordered", False):
+                        value.sort()
                 new["fields"][name] = {
-                    "value": temp,
+                    "value": value,
                     "type": field["type"],
                     "parameters": field["parameters"],
                 }
@@ -114,3 +140,7 @@ class InputSanitizer:
     def thing_edit(self, original, form):
         """Edit thing"""
         return self._material_edit(original, form)
+
+    def thing_new(self, original, form):
+        """New thing"""
+        return self._material_new(original, form)
