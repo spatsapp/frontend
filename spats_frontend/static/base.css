@@ -1,85 +1,85 @@
 html {
-	font-size: 24px;
+    font-size: 24px;
 }
 
 body {
-	height: 100%;
-	margin: 1em;
-	background-color:black;
-	color:lime;
-	font-family: monospace;
+    height: 100%;
+    margin: 1em;
+    background-color:black;
+    color:lime;
+    font-family: monospace;
 }
 
 header {
-	padding: 0.50em;
-	text-align: center;
+    padding: 0.50em;
+    text-align: center;
 }
 
 nav {
-	padding: 0.50em;
-	text-align: center;
+    padding: 0.50em;
+    text-align: center;
 }
 nav div {
-	display: flex;
-	justify-content: space-between;
+    display: flex;
+    justify-content: space-between;
 }
 
 main {
-	padding: 0.50em;
+    padding: 0.50em;
 }
 
 footer {
-	padding: 0.75em;
-	text-align: center;
+    padding: 0.75em;
+    text-align: center;
 }
 
 a:link, a:visited {
-	text-decoration: none;
-	color:lime;
+    text-decoration: none;
+    color:lime;
 }
 
 a:hover, a:active {
-	text-decoration: underline;
+    text-decoration: underline;
 }
 
 .error {
-	margin: 2em;
-	color: red;
+    margin: 2em;
+    color: red;
 }
 
 hr {
-	border-color: lime;
+    border-color: lime;
 }
 
 pre {
-	color: lime;
-	font-family: monospace;
+    color: lime;
+    font-family: monospace;
 }
 
 ul li {
-	list-style-type: none;
+    list-style-type: none;
 }
 
 table {
-	font-size: 1em;
+    font-size: 1em;
 }
 
 table.list tr {
-	background-color: black;
+    background-color: black;
 }
 
 tr:nth-child(even) {
-	background-color: #111111;
+    background-color: #111111;
 }
 
 td {
-	padding: 0.5em;
+    padding: 0.5em;
 }
 
 .key {
-	text-align: right;
+    text-align: right;
 }
 
 .row {
-	display: inline;
+    display: inline;
 }

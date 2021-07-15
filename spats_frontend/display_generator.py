@@ -16,10 +16,10 @@ class DisplayGenerator:
                 {
                     "name": key,
                     "description": current["description"],
-                    "parameters": current["parameters"],
+                    "parameters": current.get("parameters") or "",
                     "type": current["type"],
-                    "inherited": _id != current["origin"],
-                    "origin": current["origin"],
+                    "inherited": _id != current.get("origin"),
+                    "origin": current.get("origin", _id),
                 }
             )
         return field_order
@@ -32,7 +32,7 @@ class DisplayGenerator:
             field_order.append(
                 {
                     "name": key,
-                    "value": material_fields.get(key) or '',
+                    "value": material_fields.get(key) or "",
                     "parameters": symbolic["parameters"],
                     "type": symbolic["type"],
                 }
@@ -51,7 +51,9 @@ class DisplayGenerator:
                 val = (
                     raw
                     if (not isinstance(raw, list))
-                    else ", ".join([(str(r) if "," not in str(r) else f'"{r}"') for r in raw])
+                    else ", ".join(
+                        [(str(r) if "," not in str(r) else f'"{r}"') for r in raw]
+                    )
                 )
                 output.append((key, val))
         return {
@@ -130,18 +132,16 @@ class DisplayGenerator:
         fields = []
         for field in symbolic["order"]:
             value = symbolic["fields"][field]
-            fields.append({
-                "name": field,
-                "description": value["description"],
-                "parameters": value["parameters"],
-                "type": value["type"],
-            })
+            fields.append(
+                {
+                    "name": field,
+                    "description": value["description"],
+                    "parameters": value["parameters"],
+                    "type": value["type"],
+                }
+            )
 
-        return {
-            "type": symbolic["_id"],
-            "name": symbolic["name"],
-            "fields": fields
-        }
+        return {"type": symbolic["_id"], "name": symbolic["name"], "fields": fields}
 
     @staticmethod
     def _symbolic_list(docs):
@@ -153,12 +153,12 @@ class DisplayGenerator:
             "_id": symbolic["_id"],
             "name": symbolic["name"],
             "primary": symbolic["primary"],
-            "secondary": symbolic["secondary"],
-            "tertiary": ", ".join(symbolic["tertiary"])
-            if symbolic["tertiary"]
-            else symbolic["tertiary"],
+            "secondary": symbolic.get("secondary") or "",
+            "tertiary": ", ".join(symbolic.get("tertiary", [])) or "",
             "fields": self._symbolic_fields_to_list(
-                symbolic["fields"], symbolic["order"], symbolic["_id"]
+                symbolic["fields"],
+                symbolic["order"],
+                symbolic["_id"],
             ),
         }
 
@@ -168,14 +168,17 @@ class DisplayGenerator:
             "_id": symbolic["_id"],
             "name": symbolic["name"],
             "primary": symbolic["primary"],
-            "secondary": symbolic["secondary"],
-            "tertiary": ", ".join(symbolic["tertiary"])
-            if symbolic["tertiary"]
-            else symbolic["tertiary"],
+            "secondary": symbolic.get("secondary") or "",
+            "tertiary": ", ".join(symbolic.get("tertiary", [])) or "",
             "fields": self._symbolic_fields_to_list(
-                symbolic["fields"], symbolic["order"], symbolic["_id"]
+                symbolic["fields"],
+                symbolic["order"],
+                symbolic["_id"],
             ),
         }
+
+    def _symbolic_new(self, doc, type_):
+        return self._symbolic_edit(doc, type_)
 
     def asset_info(self, doc):
         """Get asset info"""
@@ -188,6 +191,10 @@ class DisplayGenerator:
     def asset_edit(self, doc):
         """Edit asset"""
         return self._symbolic_edit(doc, "asset")
+
+    def asset_new(self, doc):
+        """Create new asset"""
+        return self._symbolic_new(doc, "asset")
 
     def thing_info(self, doc):
         """Get thing info"""
@@ -216,6 +223,10 @@ class DisplayGenerator:
     def combo_edit(self, doc):
         """Edit combo"""
         return self._symbolic_edit(doc, "combo")
+
+    def combo_new(self, doc):
+        """Create new combo"""
+        return self._symbolic_new(doc, "combo")
 
     def group_info(self, doc):
         """Get group info"""

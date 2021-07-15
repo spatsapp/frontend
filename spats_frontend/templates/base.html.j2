@@ -1,39 +1,39 @@
 <html{% block html_attribs %}{% endblock html_attribs %}>
 {%- block html %}
-	{% block head %}
-		<title>{% block title %}SPATS{% if title %} - {{ title }}{% endif %}{% endblock %}</title>
-		{%- block metas %}
-			<meta charset="utf-8">
-			<meta name="author" content="Sean Slater">
-		{%- endblock metas %}
-			<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-			<link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
-			{% block css %}{% endblock css %}
-	{% endblock head %}
-	{% block body %}
-		<header>
-			{% block header %}
-				<h1>SPATS - Spats Personal Asset Tracking Software<h1>
-			{% endblock header %}
-		</header>
-		<nav>
-			<div>
-			| <a href="/">Home</a>|<a href="/thing">Things</a>|<a href="/asset">Assets</a>|<a href="/combo">Combos</a>|<a href="/group">Groups</a>|
-			</div>
-			{% block nav %}
-			{% endblock nav %}
-		</nav>
-		<hr />
-		<main>
-			{% if stuff is not none %}{{stuff|safe}}{% endif %}
-			{% block content %}
-			{% endblock content %}
-		</main>
-		<hr />
-		<footer>
-			{% block footer %}Spats (c) 2019-2021{% endblock footer %}
-		</footer>
-	{% endblock body %}
-	{% block js %}{% endblock js %}
+    {% block head %}
+        <title>{% block title %}SPATS{% if title %} - {{ title }}{% endif %}{% endblock %}</title>
+        {%- block metas %}
+            <meta charset="utf-8">
+            <meta name="author" content="Sean Slater">
+        {%- endblock metas %}
+        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
+        {% block css %}{% endblock css %}
+    {% endblock head %}
+    {% block body %}
+        <header>
+            {% block header %}
+                <h1>SPATS - Spats Personal Asset Tracking Software<h1>
+            {% endblock header %}
+        </header>
+        <nav>
+            <div>
+            | <a href="/">Home</a>|<a href="/thing">Things</a>|<a href="/group">Groups</a>|<a href="/asset">Assets</a>|<a href="/combo">Combos</a>|
+            </div>
+            {% block nav %}
+            {% endblock nav %}
+        </nav>
+        <hr />
+        <main>
+            {% if stuff is not none %}{{stuff|safe}}{% endif %}
+            {% block content %}
+            {% endblock content %}
+        </main>
+        <hr />
+        <footer>
+            {% block footer %}Spats (c) 2019-2021{% endblock footer %}
+        </footer>
+    {% endblock body %}
+    {% block js %}{% endblock js %}
 {%- endblock html %}
 </html>

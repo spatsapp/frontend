@@ -1,0 +1,329 @@
+{% macro _display(value) %}
+    {{ value|replace('_', ' ')|title}}
+{% endmacro %}
+
+{% macro _param_date_format(id_name, date_format) %}
+    <label for="{{id_name}}_dateformat">{{ _display('date_format') }}</label>
+    <select id="{{id_name}}_dateformat" name="{{id_name}}_dateformat">
+        <option value="" {% if date_format == "" %}selected{% endif %}></option>
+        <option value="%Y" {% if date_format == "%Y" %}selected{% endif %}>yyyy (1970)</option>
+        <option value="%y" {% if date_format == "%y" %}selected{% endif %}>yy (70)</option>
+        <option value="%b %d, %Y" {% if date_format == "%b %d, %Y" %}selected{% endif %}>mmm dd, yyyy (Dec 26, 1970)</option>
+        <option value="%B %d, %y" {% if date_format == "%B %d, %y" %}selected{% endif %}>mmmm dd, yy (December 26, 70)</option>
+
+        <option value="%Y-%m-%d" {% if date_format == "%Y-%m-%d" %}selected{% endif %}>yyyy-mm-dd (1970-12-26)</option>
+        <option value="%y-%m-%d" {% if date_format == "%y-%m-%d" %}selected{% endif %}>yy-mm-dd (70-12-26)</option>
+        <option value="%m-%d-%Y" {% if date_format == "%m-%d-%Y" %}selected{% endif %}>mm-dd-yyyy (12-26-1970)</option>
+        <option value="%m-%d-%y" {% if date_format == "%m-%d-%y" %}selected{% endif %}>mm-dd-yy (12-26-70)</option>
+        <option value="%b-%d-%Y" {% if date_format == "%b-%d-%Y" %}selected{% endif %}>mmm-dd-yyyy (Dec-26-1970)</option>
+        <option value="%B-%d-%y" {% if date_format == "%B-%d-%y" %}selected{% endif %}>mmmm-dd-yy (December-26-70)</option>
+        <option value="%d-%m-%Y" {% if date_format == "%d-%m-%Y" %}selected{% endif %}>dd-mm-yyyy (26-12-1970)</option>
+        <option value="%d-%m-%y" {% if date_format == "%d-%m-%y" %}selected{% endif %}>dd-mm-yy (26-12-70)</option>
+        <option value="%d-%b-%Y" {% if date_format == "%d-%b-%Y" %}selected{% endif %}>dd-mmm-yyyy (26-Dec-1970)</option>
+        <option value="%d-%B-%y" {% if date_format == "%d-%B-%y" %}selected{% endif %}>dd-mmmm-yy (26-December-70)</option>
+
+        <option value="%m-%d" {% if date_format == "%m-%d" %}selected{% endif %}>mm-dd (12-26)</option>
+        <option value="%d-%m" {% if date_format == "%d-%m" %}selected{% endif %}>dd-mm (26-12)</option>
+        <option value="%b-%d" {% if date_format == "%b-%d" %}selected{% endif %}>mmm-dd (Dec-26)</option>
+        <option value="%d-%b" {% if date_format == "%d-%b" %}selected{% endif %}>dd-mmm (26-Dec)</option>
+        <option value="%B-%d" {% if date_format == "%B-%d" %}selected{% endif %}>mmmm-dd (December-26)</option>
+        <option value="%d-%B" {% if date_format == "%d-%B" %}selected{% endif %}>dd-mmmm (26-December)</option>
+
+        <option value="%m-%Y" {% if date_format == "%m-%Y" %}selected{% endif %}>mm-yyyy (12-1970)</option>
+        <option value="%m-%y" {% if date_format == "%m-%y" %}selected{% endif %}>mm-yy (12-70)</option>
+        <option value="%b-%Y" {% if date_format == "%b-%Y" %}selected{% endif %}>mmm-yyyy (Dec-1970)</option>
+        <option value="%B-%y" {% if date_format == "%B-%y" %}selected{% endif %}>mmmm-yy (December-70)</option>
+        <option value="%Y-%m" {% if date_format == "%Y-%m" %}selected{% endif %}>yyyy-mm (1970-12)</option>
+        <option value="%y-%m" {% if date_format == "%y-%m" %}selected{% endif %}>yy-mm (70-12)</option>
+        <option value="%Y-%b" {% if date_format == "%Y-%b" %}selected{% endif %}>yyyy-mmm (1970-Dec)</option>
+        <option value="%y-%B" {% if date_format == "%y-%B" %}selected{% endif %}>yy-mmmm (70-December)</option>
+
+        <option value="%m/%d/%Y" {% if date_format == "%m/%d/%Y" %}selected{% endif %}>mm/dd/yyyy (12/26/1970)</option>
+        <option value="%m/%d/%y" {% if date_format == "%m/%d/%y" %}selected{% endif %}>mm/dd/yy (12/26/70)</option>
+        <option value="%b/%d/%Y" {% if date_format == "%b/%d/%Y" %}selected{% endif %}>mmm/dd/yyyy (Dec/26/1970)</option>
+        <option value="%B/%d/%y" {% if date_format == "%B/%d/%y" %}selected{% endif %}>mmmm/dd/yy (December/26/70)</option>
+        <option value="%d/%m/%Y" {% if date_format == "%d/%m/%Y" %}selected{% endif %}>dd/mm/yyyy (26/12/1970)</option>
+        <option value="%d/%m/%y" {% if date_format == "%d/%m/%y" %}selected{% endif %}>dd/mm/yy (26/12/70)</option>
+        <option value="%d/%b/%Y" {% if date_format == "%d/%b/%Y" %}selected{% endif %}>dd/mmm/yyyy (26/Dec/1970)</option>
+        <option value="%d/%B/%y" {% if date_format == "%d/%B/%y" %}selected{% endif %}>dd/mmmm/yy (26/December/70)</option>
+        <option value="%m/%d" {% if date_format == "%m/%d" %}selected{% endif %}>mm/dd (12/26)</option>
+        <option value="%d/%m" {% if date_format == "%d/%m" %}selected{% endif %}>dd/mm (26/12)</option>
+        <option value="%b/%d" {% if date_format == "%b/%d" %}selected{% endif %}>mmm/dd (Dec/26)</option>
+        <option value="%d/%b" {% if date_format == "%d/%b" %}selected{% endif %}>dd/mmm (26/Dec)</option>
+        <option value="%B/%d" {% if date_format == "%B/%d" %}selected{% endif %}>mmmm/dd (December/26)</option>
+        <option value="%d/%B" {% if date_format == "%d/%B" %}selected{% endif %}>dd/mmmm (26/December)</option>
+
+        <option value="%m/%Y" {% if date_format == "%m/%Y" %}selected{% endif %}>mm/yyyy (12/1970)</option>
+        <option value="%m/%y" {% if date_format == "%m/%y" %}selected{% endif %}>mm/yy (12/70)</option>
+        <option value="%b/%Y" {% if date_format == "%b/%Y" %}selected{% endif %}>mmm/yyyy (Dec/1970)</option>
+        <option value="%B/%y" {% if date_format == "%B/%y" %}selected{% endif %}>mmmm/yy (December/70)</option>
+        <option value="%Y/%m" {% if date_format == "%Y/%m" %}selected{% endif %}>yyyy/mm (1970/12)</option>
+        <option value="%y/%m" {% if date_format == "%y/%m" %}selected{% endif %}>yy/mm (70/12)</option>
+        <option value="%Y/%b" {% if date_format == "%Y/%b" %}selected{% endif %}>yyyy/mmm (1970/Dec)</option>
+        <option value="%y/%B" {% if date_format == "%y/%B" %}selected{% endif %}>yy/mmmm (70/December)</option>
+
+        <option value="%m.%d.%Y" {% if date_format == "%m.%d.%Y" %}selected{% endif %}>mm.dd.yyyy (12.26.1970)</option>
+        <option value="%m.%d.%y" {% if date_format == "%m.%d.%y" %}selected{% endif %}>mm.dd.yy (12.26.70)</option>
+        <option value="%b.%d.%Y" {% if date_format == "%b.%d.%Y" %}selected{% endif %}>mmm.dd.yyyy (Dec.26.1970)</option>
+        <option value="%B.%d.%y" {% if date_format == "%B.%d.%y" %}selected{% endif %}>mmmm.dd.yy (December.26.70)</option>
+        <option value="%d.%m.%Y" {% if date_format == "%d.%m.%Y" %}selected{% endif %}>dd.mm.yyyy (26.12.1970)</option>
+        <option value="%d.%m.%y" {% if date_format == "%d.%m.%y" %}selected{% endif %}>dd.mm.yy (26.12.70)</option>
+        <option value="%d.%b.%Y" {% if date_format == "%d.%b.%Y" %}selected{% endif %}>dd.mmm.yyyy (26.Dec.1970)</option>
+        <option value="%d.%B.%y" {% if date_format == "%d.%B.%y" %}selected{% endif %}>dd.mmmm.yy (26.December.70)</option>
+        <option value="%m.%d" {% if date_format == "%m.%d" %}selected{% endif %}>mm.dd (12.26)</option>
+        <option value="%d.%m" {% if date_format == "%d.%m" %}selected{% endif %}>dd.mm (26.12)</option>
+        <option value="%b.%d" {% if date_format == "%b.%d" %}selected{% endif %}>mmm.dd (Dec.26)</option>
+        <option value="%d.%b" {% if date_format == "%d.%b" %}selected{% endif %}>dd.mmm (26.Dec)</option>
+        <option value="%B.%d" {% if date_format == "%B.%d" %}selected{% endif %}>mmmm.dd (December.26)</option>
+        <option value="%d.%B" {% if date_format == "%d.%B" %}selected{% endif %}>dd.mmmm (26.December)</option>
+
+        <option value="%m.%Y" {% if date_format == "%m.%Y" %}selected{% endif %}>mm.yyyy (12.1970)</option>
+        <option value="%m.%y" {% if date_format == "%m.%y" %}selected{% endif %}>mm.yy (12.70)</option>
+        <option value="%b.%Y" {% if date_format == "%b.%Y" %}selected{% endif %}>mmm.yyyy (Dec.1970)</option>
+        <option value="%B.%y" {% if date_format == "%B.%y" %}selected{% endif %}>mmmm.yy (December.70)</option>
+        <option value="%Y.%m" {% if date_format == "%Y.%m" %}selected{% endif %}>yyyy.mm (1970.12)</option>
+        <option value="%y.%m" {% if date_format == "%y.%m" %}selected{% endif %}>yy.mm (70.12)</option>
+        <option value="%Y.%b" {% if date_format == "%Y.%b" %}selected{% endif %}>yyyy.mmm (1970.Dec)</option>
+        <option value="%y.%B" {% if date_format == "%y.%B" %}selected{% endif %}>yy.mmmm (70.December)</option>
+
+        <option value="%m %d %Y" {% if date_format == "%m %d %Y" %}selected{% endif %}>mm dd yyyy (12 26 1970)</option>
+        <option value="%m %d %y" {% if date_format == "%m %d %y" %}selected{% endif %}>mm dd yy (12 26 70)</option>
+        <option value="%b %d %Y" {% if date_format == "%b %d %Y" %}selected{% endif %}>mmm dd yyyy (Dec 26 1970)</option>
+        <option value="%B %d %y" {% if date_format == "%B %d %y" %}selected{% endif %}>mmmm dd yy (December 26 70)</option>
+        <option value="%d %m %Y" {% if date_format == "%d %m %Y" %}selected{% endif %}>dd mm yyyy (26 12 1970)</option>
+        <option value="%d %m %y" {% if date_format == "%d %m %y" %}selected{% endif %}>dd mm yy (26 12 70)</option>
+        <option value="%d %b %Y" {% if date_format == "%d %b %Y" %}selected{% endif %}>dd mmm yyyy (26 Dec 1970)</option>
+        <option value="%d %B %y" {% if date_format == "%d %B %y" %}selected{% endif %}>dd mmmm yy (26 December 70)</option>
+        <option value="%m %d" {% if date_format == "%m %d" %}selected{% endif %}>mm dd (12 26)</option>
+        <option value="%d %m" {% if date_format == "%d %m" %}selected{% endif %}>dd mm (26 12)</option>
+        <option value="%b %d" {% if date_format == "%b %d" %}selected{% endif %}>mmm dd (Dec 26)</option>
+        <option value="%d %b" {% if date_format == "%d %b" %}selected{% endif %}>dd mmm (26 Dec)</option>
+        <option value="%B %d" {% if date_format == "%B %d" %}selected{% endif %}>mmmm dd (December 26)</option>
+        <option value="%d %B" {% if date_format == "%d %B" %}selected{% endif %}>dd mmmm (26 December)</option>
+
+        <option value="%m %Y" {% if date_format == "%m %Y" %}selected{% endif %}>mm yyyy (12 1970)</option>
+        <option value="%m %y" {% if date_format == "%m %y" %}selected{% endif %}>mm yy (12 70)</option>
+        <option value="%b %Y" {% if date_format == "%b %Y" %}selected{% endif %}>mmm yyyy (Dec 1970)</option>
+        <option value="%B %y" {% if date_format == "%B %y" %}selected{% endif %}>mmmm yy (December 70)</option>
+        <option value="%Y %m" {% if date_format == "%Y %m" %}selected{% endif %}>yyyy mm (1970 12)</option>
+        <option value="%y %m" {% if date_format == "%y %m" %}selected{% endif %}>yy mm (70 12)</option>
+        <option value="%Y %b" {% if date_format == "%Y %b" %}selected{% endif %}>yyyy mmm (1970 Dec)</option>
+        <option value="%y %B" {% if date_format == "%y %B" %}selected{% endif %}>yy mmmm (70 December)</option>
+    </select>
+{% endmacro %}
+
+{% macro _param_default(id_name, default) %}
+    <label for="{{id_name}}_default">{{ _display('default') }}</label>
+    <input
+        type="text"
+        id="{{id_name}}_default"
+        name="{{id_name}}_default"
+        value="{{default}}"
+    />
+{% endmacro %}
+
+{% macro _param_list_type(id_name, list_type) %}
+    <label for="{{id_name}}_listtype">{{ _display('list_type') }}</label>
+    <select id="{{id_name}}_listtype" name="{{id_name}}_listtype">
+        <option value=""></option>
+        <option value="boolean" {% if list_type == "boolean" %}selected{% endif %}>Boolean</option>
+        <option value="string" {% if list_type == "string" %}selected{% endif %}>String</option>
+        <option value="integer" {% if list_type == "integer" %}selected{% endif %}>Integer</option>
+        <option value="decimal" {% if list_type == "decimal" %}selected{% endif %}>Decimal</option>
+        <option value="date" {% if list_type == "date" %}selected{% endif %}>Date</option>
+        <option value="reference" {% if list_type == "reference" %}selected{% endif %}>Reference</option>
+    </select>
+{% endmacro %}
+
+{% macro _param_max_length(id_name, max_length) %}
+    <label for="{{id_name}}_maxlength">{{ _display('max_length') }}</label>
+    <input
+        type="number"
+        id="{{id_name}}_maxlength"
+        name="{{id_name}}_maxlength"
+        step="1"
+        value="{{max_length}}"
+    />
+{% endmacro %}
+
+{% macro _param_max_value(id_name, max_value) %}
+    <label for="{{id_name}}_maxvalue">{{ _display('max_value') }}</label>
+    <input
+        type="number"
+        id="{{id_name}}_maxvalue"
+        name="{{id_name}}_maxvalue"
+        step="any"
+        value="{{max_value}}"
+    />
+{% endmacro %}
+
+{% macro _param_min_length(id_name, min_length) %}
+    <label for="{{id_name}}_minlength">{{ _display('min_length') }}</label>
+    <input
+        type="number"
+        id="{{id_name}}_minlength"
+        name="{{id_name}}_minlength"
+        step="1"
+        value="{{min_length}}"
+    />
+{% endmacro %}
+
+{% macro _param_min_value(id_name, min_value) %}
+    <label for="{{id_name}}_minvalue">{{ _display('min_value') }}</label>
+    <input
+        type="number"
+        id="{{id_name}}_minvalue"
+        name="{{id_name}}_minvalue"
+        step="any"
+        value="{{min_value}}"
+    />
+{% endmacro %}
+
+{% macro _param_ordered(id_name, ordered) %}
+    <label for="{{id_name}}_ordered">{{ _display('ordered') }}</label>
+    <input
+        type="checkbox"
+        id="{{id_name}}_ordered"
+        name="{{id_name}}_ordered"
+        {% if ordered %}checked{% endif %}
+    />
+{% endmacro %}
+
+{% macro _param_precision(id_name, precision) %}
+    <label for="{{id_name}}_precision">{{ _display('precision') }}</label>
+    <input
+        type="number"
+        id="{{id_name}}_precision"
+        name="{{id_name}}_precision"
+        step="1"
+        value="{{precision}}"
+    />
+{% endmacro %}
+
+{% macro _param_required(id_name, required) %}
+    <label for="{{id_name}}_required">{{ _display('required') }}</label>
+    <input
+        type="checkbox"
+        id="{{id_name}}_required"
+        name="{{id_name}}_required"
+        {% if required %}checked{% endif %}
+    />
+{% endmacro %}
+
+{% macro _param_unique(id_name, unique) %}
+    <label for="{{id_name}}_unique">{{ _display('unique') }}</label>
+    <input
+        type="checkbox"
+        id="{{id_name}}_unique"
+        name="{{id_name}}_unique"
+        {% if unique %}checked{% endif %}
+    />
+{% endmacro %}
+
+{% macro _symbolic_field(symbolic, field, index, new_parent_id) %}
+    {% set params = field['parameters'] %}
+    {% set id_name = 'i'+(index|string) %}
+    {% if new_parent_id is defined %}
+        {% set parent_id = new_parent_id %}
+    {% elif field['inherited'] %}
+        {% set parent_id = field['origin'] %}
+    {% endif %}
+
+    <tbody class="{{id_name}}" data-index="{{index}}">
+        <tr class="field_row">
+            <td>
+                <input
+                    type="text"
+                    id="{{id_name}}_name"
+                    name="{{id_name}}_name"
+                    value="{{field['name']}}"
+                    placeholder="Field Name"
+                    {% if parent_id is defined %}style="margin-bottom:1em"{% endif %}
+                />
+                {% if parent_id is defined %}(inherited from <a href="/{{symbolic}}/{{parent_id}}"><i>{{parent_id}}</i></a>){% endif %}
+            </td>
+            <td>
+                <select class="type_select" id="{{id_name}}_type" name="{{id_name}}_type" >
+                    <option value="boolean" {% if field['type'] == "boolean" %}selected{% endif %}>Boolean</option>
+                    <option value="string" {% if field['type'] == "string" %}selected{% endif %}>String</option>
+                    <option value="integer" {% if field['type'] == "integer" %}selected{% endif %}>Integer</option>
+                    <option value="decimal" {% if field['type'] == "decimal" %}selected{% endif %}>Decimal</option>
+                    <option value="date" {% if field['type'] == "date" %}selected{% endif %}>Date</option>
+                    <option value="list" {% if field['type'] == "list" %}selected{% endif %}>List</option>
+                    <option value="reference" {% if field['type'] == "reference" %}selected{% endif %}>Reference</option>
+                </select>
+            </td>
+            <td>
+                <textarea id="{{id_name}}_description" name="{{id_name}}_description" >{{field['description']}}</textarea>
+            </td>
+        </tr>
+        <tr><input type="hidden" id="{{id_name}}_og_name" name="{{id_name}}_og_name" value="{{field['name']}}" /></tr>
+        <tr class="param_row">
+            <td>{{ _param_required(id_name, params['required']) }}</td>
+            <td>{{ _param_unique(id_name, params['unique']) }}</td>
+            <td>{{ _param_default(id_name, params['default']) }}</td>
+        </tr>
+        <tr class="param_row" id="{{id_name}}_param_string" {% if field['type'] != 'string' %}hidden{% endif %}>
+            <td>{{ _param_min_length(id_name, params['min_length']) }}</td>
+            <td>{{ _param_max_length(id_name, params['max_length']) }}</td>
+            <td></td>
+        </tr>
+        <tr class="param_row" id="{{id_name}}_param_integer" {% if field['type'] != 'integer' %}hidden{% endif %}>
+            <td>{{ _param_min_value(id_name, params['min_value']) }}</td>
+            <td>{{ _param_max_value(id_name, params['max_value']) }}</td>
+            <td></td>
+        </tr>
+        <tr class="param_row" id="{{id_name}}_param_decimal" {% if field['type'] != 'decimal' %}hidden{% endif %}>
+            <td>{{ _param_min_value(id_name, params['min_value']) }}</td>
+            <td>{{ _param_max_value(id_name, params['max_value']) }}</td>
+            <td>{{ _param_precision(id_name, params['precision']) }}</td>
+        </tr>
+        <tr class="param_row" id="{{id_name}}_param_date" {% if field['type'] != 'date' %}hidden{% endif %}>
+            <td>{{ _param_min_value(id_name, params['min_value']) }}</td>
+            <td>{{ _param_max_value(id_name, params['max_value']) }}</td>
+            <td>{{ _param_date_format(id_name, params['date_format']) }}</td>
+        </tr>
+        <tr class="param_row" id="{{id_name}}_param_list" {% if field['type'] != 'list' %}hidden{% endif %}>
+            <td>{{  _param_list_type(id_name, params['list_type'])  }}</td>
+            <td>{{  _param_ordered(id_name, params['ordered'])  }}</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><button class="moveup" data-index="{{ index }}">Move Field Up</button></td>
+            <td><button class="movedown" data-index="{{ index }}">Move Field Down</button></td>
+            <td><button class="removerow" data-index="{{ index }}">Remove Field</button></td>
+        </tr>
+    </tbody>
+{% endmacro %}
+
+{% macro symbolic_form(symbolic, document, submit_message) %}
+        <h1><input type="text" id="name" name="{{symbolic}}_name" placeholder="{{symbolic|capitalize}} Name" value="{{document['name']}}" required></h1>
+        <table id="data">
+            <thead>
+                <tr>
+                    <th style="text-align:center;">Name</th>
+                    <th style="text-align:center;">Type</th>
+                    <th style="text-align:center;">Description</th>
+                </tr>
+                <tr>
+                    <th class="param_row" colspan="3" style="text-align:center;">Parameters</th>
+                </tr>
+            </thead>
+            {% for field in document['fields'] %}
+                {{ _symbolic_field(symbolic, field, loop.index0, document['_id']) }}
+            {% endfor %}
+        </table>
+        <br />
+        <button id="addrow">Add Field</button>
+        <br /></br />
+        <label for="primary">Primary: <input style="width:auto;" type="text" id="primary" name="primary" value="{{document['primary']}}"></label>
+        <br />
+        <label for="secondary">Secondary: <input style="width:auto;" type="text" id="secondary" name="secondary" value="{{document['secondary']}}"></label>
+        <br />
+        <label for="tertiary">Tertiary: <input style="width:auto;" type="text" id="tertiary" name="tertiary" value="{{document['tertiary']}}"></label>
+        <br /><br />
+
+        <input type="hidden" id="order" name="order" />
+        <input type="hidden" id="inherit" name="inherit" value="{{document['_id']}}" />
+        <button id="submit">{{submit_message}}</button>
+{% endmacro %}

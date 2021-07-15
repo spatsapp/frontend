@@ -122,11 +122,31 @@ def asset_new_thing(_id):
         )
     return redirect(f"/thing/{new['created'][0]}")
 
-@app.route("/asset/new", methods=["GET"])
+@app.route("/asset/new", methods=["GET", "POST"])
 @csrf.exempt
 def asset_new_type():
     """Create new asset"""
-
+    if request.method == "GET":
+        _id = request.args.get("subtype", "_Asset")
+        raw = get(f"{database}/asset/{_id}").json()
+        res = display.asset_new(raw)
+        return render_template(
+            "symbolic_new.html.j2",
+            document=res,
+            symbolic="asset",
+        )
+    _id = request.form.get("inherit", "_Asset")
+    raw = get(f"{database}/asset/{_id}").json()
+    res = display.asset_new(raw)
+    sanitized = sanitzer.symbolic_new(res, request.form)
+    update = post(f"{database}/asset/create", json=sanitized).json()
+    if update["errored"]:
+        return render_template(
+            "symbolic_new.html.j2",
+            document=res,
+            symbolic="asset",
+        )
+    return redirect(f"/asset/{update['created'][0]}")
 
 @app.route("/thing", methods=["GET"])
 @csrf.exempt
@@ -233,7 +253,7 @@ def combo_edit(_id):
     raw = get(f"{database}/combo/{_id}").json()
     res = display.combo_edit(raw)
     return render_template(
-        "symbolic_edit.html.j2",
+        "symbolic_form.html.j2",
         document=res,
         symbolic="combo",
     )
@@ -265,11 +285,20 @@ def combo_new_group(_id):
     return redirect(f"/group/{new['created'][0]}")
 
 
-@app.route("/combo/new", methods=["GET"])
+@app.route("/combo/new", methods=["GET", "POST"])
 @csrf.exempt
 def combo_new_type():
     """Create new combo"""
-
+    if request.method == "GET":
+        _id = request.args.get("subtype", "_Combo")
+        raw = get(f"{database}/combo/{_id}").json()
+        res = display.combo_new(raw)
+        return render_template(
+            "symbolic_new.html.j2",
+            document=res,
+            symbolic="combo",
+        )
+    return request.form
 
 @app.route("/group", methods=["GET"])
 @csrf.exempt
@@ -357,22 +386,24 @@ def upload():
     data = load(filename.stream)
 
     new_things = []
-    new_groups = []
-    for thing in data["thing"]:
+    for thing in data.get("thing", []):
         _id = thing["type"]
         raw = get(f"{database}/asset/{_id}").json()
         res = display.thing_new(raw)
         sanitized = sanitzer.material_new(res, thing['fields'])
         new_things.append(sanitized)
-    data["thing"] = new_things
+    if new_things:
+        data["thing"] = new_things
 
-    for group in data["group"]:
+    new_groups = []
+    for group in data.get("group", []):
         _id = group["type"]
         raw = get(f"{database}/combo/{_id}").json()
         res = display.group_new(raw)
         sanitized = sanitzer.material_new(res, group['fields'])
         new_groups.append(sanitized)
-    data["group"] = new_groups
+    if new_groups:
+        data["group"] = new_groups
 
     res = post(f"{database}/upload", json=data)
     return jsonify(res.json())

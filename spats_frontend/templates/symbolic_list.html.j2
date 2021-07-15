@@ -1,18 +1,41 @@
 {% extends "base.html.j2" %}
 
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='form.css') }}">
+    <style>
+        nav form {
+            padding: 0;
+            margin: 0;
+        }
+        nav form div, p, select {
+            display: inline-block;
+            padding: 0;
+            margin: 0;
+        }
+    </style>
+{% endblock css %}
 
 {% block nav %}
-<br />
-<div>
-|<a href="/{{symbolic}}/new">New {{symbolic|capitalize}} Type</a>
-|
-</div>
+    <br />
+    <div>
+        |
+        <form action="/{{symbolic}}/new" method="GET">
+            <div><input type="submit" value="Create New" /></div>
+            <select name="subtype" id="subtype">
+                {% for id, name in documents %}
+                    <option value="{{id}}">{{name}}</option>
+                {% endfor %}
+            </select>
+            <p>Subtype</p>
+        </form>
+        |
+    </div>
 {% endblock %}
 
 {% block content %}
-	<ul style="list-style-type:none">
-	{% for id, name in documents %}
-		<li><a href="/{{symbolic}}/{{id}}">{{name}}</a></li>
-	{% endfor %}
-	</ul>
+    <ul style="list-style-type:none">
+    {% for id, name in documents %}
+        <li><a href="/{{symbolic}}/{{id}}">{{name}}</a></li>
+    {% endfor %}
+    </ul>
 {% endblock %}

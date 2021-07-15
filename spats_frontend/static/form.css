@@ -1,0 +1,70 @@
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+tr:nth-child(even) {
+    background-color: black;
+}
+
+input {
+    background-color: inherit;
+    color: lime;
+    border: 0;
+    border-bottom: 1px solid lime;
+    width: 100%;
+    font-size: 1em;
+}
+
+textarea {
+    background-color: inherit;
+    color: lime;
+    border: 1px solid lime;
+    width: 100%;
+    height: 5em;
+    font-size: 1em;
+    padding: 0.25em;
+}
+
+tr.param_row,th.param_row {
+    background-color: #111111;
+}
+
+tr.param_row input,select {
+    border: 0;
+    border-bottom: 1px solid lime;
+}
+
+tr.param_row select,option {
+    border-bottom: 1px solid lime;
+    background-color: #111111;
+}
+
+select,option {
+    color: inherit;
+    background-color: black;
+    font-size: inherit;
+    border: 0;
+
+}
+
+option:checked {
+    background-color: #111111;
+}
+
+button {
+    color: inherit;
+    background-color: inherit;
+    font-size: inherit;
+    border: 1px solid lime;
+    width: 100%;
+}
+
+input[type="checkbox"] {
+    width: auto;
+    margin-left: 0.5em;
+}
+
+input {
+    width: 100%;
+}
