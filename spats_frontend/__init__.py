@@ -385,26 +385,6 @@ def upload():
     filename = request.files["filename"]
     data = load(filename.stream)
 
-    new_things = []
-    for thing in data.get("thing", []):
-        _id = thing["type"]
-        raw = get(f"{database}/asset/{_id}").json()
-        res = display.thing_new(raw)
-        sanitized = sanitzer.material_new(res, thing['fields'])
-        new_things.append(sanitized)
-    if new_things:
-        data["thing"] = new_things
-
-    new_groups = []
-    for group in data.get("group", []):
-        _id = group["type"]
-        raw = get(f"{database}/combo/{_id}").json()
-        res = display.group_new(raw)
-        sanitized = sanitzer.material_new(res, group['fields'])
-        new_groups.append(sanitized)
-    if new_groups:
-        data["group"] = new_groups
-
     res = post(f"{database}/upload", json=data)
     return jsonify(res.json())
 
