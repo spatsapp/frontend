@@ -96,21 +96,26 @@ class DisplayGenerator:
             "symbolic": symbolic["name"],
         }
 
-    def _material_info(self, doc, material_type, symbolic_type):
+    def material_info(self, material_type, symbolic_type, doc):
         material = doc[material_type]
         symbolic = doc[symbolic_type][material["type"]]
         return self._single_material(material, symbolic)
 
-    def _material_list(self, doc, material_type, symbolic_type):
+    def material_list(self, material_type, symbolic_type, doc):
         materials = doc[material_type]
         docs = []
         for material in materials:
             symbolic = doc[symbolic_type][material["type"]]
             cur = self._many_material(material, symbolic)
             docs.append(cur)
-        return docs
+        ret = {
+            "docs": docs
+        }
+        if doc.get("paginate"):
+            ret["paginate"] = doc["paginate"]
+        return ret
 
-    def _material_edit(self, doc, material_type, symbolic_type):
+    def material_edit(self, material_type, symbolic_type, doc):
         material = doc[material_type]
         symbolic_id = material["type"]
         symbolic = doc[symbolic_type][symbolic_id]
@@ -127,7 +132,7 @@ class DisplayGenerator:
         }
 
     @staticmethod
-    def _material_new(doc, type_):
+    def material_new(type_, doc):
         symbolic = doc[type_]
         fields = []
         for field in symbolic["order"]:
@@ -144,25 +149,10 @@ class DisplayGenerator:
         return {"type": symbolic["_id"], "name": symbolic["name"], "fields": fields}
 
     @staticmethod
-    def _symbolic_list(docs):
+    def symbolic_list(docs):
         return [(doc["_id"], doc["name"]) for doc in docs]
 
-    def _symbolic_info(self, doc, symbolic_type):
-        symbolic = doc[symbolic_type]
-        return {
-            "_id": symbolic["_id"],
-            "name": symbolic["name"],
-            "primary": symbolic["primary"],
-            "secondary": symbolic.get("secondary") or "",
-            "tertiary": ", ".join(symbolic.get("tertiary", [])) or "",
-            "fields": self._symbolic_fields_to_list(
-                symbolic["fields"],
-                symbolic["order"],
-                symbolic["_id"],
-            ),
-        }
-
-    def _symbolic_edit(self, doc, type_):
+    def symbolic_info(self, type_, doc):
         symbolic = doc[type_]
         return {
             "_id": symbolic["_id"],
@@ -177,69 +167,17 @@ class DisplayGenerator:
             ),
         }
 
-    def _symbolic_new(self, doc, type_):
-        return self._symbolic_edit(doc, type_)
-
-    def asset_info(self, doc):
-        """Get asset info"""
-        return self._symbolic_info(doc, "asset")
-
-    def asset_list(self, doc):
-        """List asset"""
-        return self._symbolic_list(doc)
-
-    def asset_edit(self, doc):
-        """Edit asset"""
-        return self._symbolic_edit(doc, "asset")
-
-    def asset_new(self, doc):
-        """Create new asset"""
-        return self._symbolic_new(doc, "asset")
-
-    def thing_info(self, doc):
-        """Get thing info"""
-        return self._material_info(doc, "thing", "asset")
-
-    def thing_list(self, doc):
-        """List things"""
-        return self._material_list(doc, "thing", "asset")
-
-    def thing_edit(self, doc):
-        """Edit thing"""
-        return self._material_edit(doc, "thing", "asset")
-
-    def thing_new(self, doc):
-        """Create new thing"""
-        return self._material_new(doc, "asset")
-
-    def combo_info(self, doc):
-        """Get combo info"""
-        return self._symbolic_info(doc, "combo")
-
-    def combo_list(self, doc):
-        """List combo"""
-        return self._symbolic_list(doc)
-
-    def combo_edit(self, doc):
-        """Edit combo"""
-        return self._symbolic_edit(doc, "combo")
-
-    def combo_new(self, doc):
-        """Create new combo"""
-        return self._symbolic_new(doc, "combo")
-
-    def group_info(self, doc):
-        """Get group info"""
-        return self._material_info(doc, "group", "combo")
-
-    def group_list(self, doc):
-        """List group"""
-        return self._material_list(doc, "group", "combo")
-
-    def group_edit(self, doc):
-        """Edit group"""
-        return self._material_edit(doc, "group", "combo")
-
-    def group_new(self, doc):
-        """Create new group"""
-        return self._material_new(doc, "combo")
+    def symbolic_edit(self, type_, doc):
+        symbolic = doc[type_]
+        return {
+            "_id": symbolic["_id"],
+            "name": symbolic["name"],
+            "primary": symbolic["primary"],
+            "secondary": symbolic.get("secondary") or "",
+            "tertiary": ", ".join(symbolic.get("tertiary", [])) or "",
+            "fields": self._symbolic_fields_to_list(
+                symbolic["fields"],
+                symbolic["order"],
+                symbolic["_id"],
+            ),
+        }

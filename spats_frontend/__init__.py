@@ -10,22 +10,52 @@ from flask import (
     render_template,
     request,
     send_from_directory,
+    url_for,
 )
-from flask_wtf.csrf import CSRFProtect
+
+# from flask_wtf.csrf import CSRFProtect
 from requests import delete, get, post, put
+from werkzeug.routing import BaseConverter, ValidationError
 
 from .display_generator import DisplayGenerator
 from .input_sanitizer import InputSanitizer
 
+
+class OptionConverter(BaseConverter):
+    """URL converter that only allows things in the list"""
+
+    def __init__(self, url_map, *args):
+        super().__init__(url_map)
+        self.options = set(args)
+
+    def to_python(self, value):
+        if value not in self.options:
+            raise ValidationError()
+        return value
+
+    def to_url(self, value):
+        return value
+
+
 app = Flask(__name__, static_url_path="")
 app.config.from_pyfile("frontend.cfg")
+app.url_map.converters["option"] = OptionConverter
 
-csrf = CSRFProtect()
-csrf.init_app(app)
+
+# csrf = CSRFProtect()
+# csrf.init_app(app)
 
 database = app.config["DATABASE"]
 display = DisplayGenerator()
 sanitzer = InputSanitizer()
+
+
+def _symbolic_type(material):
+    return "asset" if material == "thing" else "combo"
+
+
+def _material_type(symbolic):
+    return "thing" if symbolic == "asset" else "group"
 
 
 @app.before_request
@@ -38,345 +68,230 @@ def clear_trailing():
 
 
 @app.route("/", methods=["GET"])
-@csrf.exempt
-def query_api():
+def index():
     """Get list of api endpoints"""
-    res = get(f"{database}/").json()
-    return render_template("base.html.j2", stuff=f"<pre>{pformat(res)}</pre>")
+    return render_template("base.html.j2")
 
 
-@app.route("/asset", methods=["GET"])
-@csrf.exempt
-def asset_all():
+@app.route("/<option('asset', 'combo'):symbolic>", methods=["GET"])
+def symbolic_all(symbolic):
     """Get all assets"""
-    raw = get(f"{database}/asset/all").json()
-    res = display.asset_list(raw)
+    raw = get(f"{database}/{symbolic}/all").json()
+    res = display.symbolic_list(raw)
     return render_template(
         "symbolic_list.html.j2",
         documents=res,
-        symbolic="asset",
-        material="thing",
+        symbolic=symbolic,
+        material=_material_type(symbolic),
     )
 
 
-@app.route("/asset/<string:_id>", methods=["GET"])
-@csrf.exempt
-def asset_info(_id):
+@app.route("/<option('asset', 'combo'):symbolic>/<string:_id>", methods=["GET"])
+def symbolic_info(symbolic, _id):
     """Get specific asset info"""
-    raw = get(f"{database}/asset/{_id}").json()
-    res = display.asset_info(raw)
+    raw = get(f"{database}/{symbolic}/{_id}").json()
+    res = display.symbolic_info(symbolic, raw)
     return render_template(
         "symbolic_info.html.j2",
         document=res,
-        symbolic="asset",
-        material="thing",
+        symbolic=symbolic,
+        material=_material_type(symbolic),
     )
 
 
-@app.route("/asset/<string:_id>/edit", methods=["GET", "POST"])
-@csrf.exempt
-def asset_edit(_id):
+@app.route(
+    "/<option('asset', 'combo'):symbolic>/<string:_id>/edit",
+    methods=["GET", "POST"],
+)
+def symbolic_edit(symbolic, _id):
     """Edit asset"""
-    raw = get(f"{database}/asset/{_id}").json()
-    res = display.asset_edit(raw)
+    raw = get(f"{database}/{symbolic}/{_id}").json()
+    res = display.symbolic_edit(symbolic, raw)
     if request.method == "GET":
         return render_template(
             "symbolic_edit.html.j2",
             document=res,
-            symbolic="asset",
+            symbolic=symbolic,
         )
     sanitized = sanitzer.symbolic_edit(res, request.form)
-    update = put(f"{database}/asset/update", json=sanitized).json()
+    update = put(f"{database}/{symbolic}/update", json=sanitized).json()
     if update["errored"]:
         return render_template(
             "symbolic_edit.html.j2",
             document=res,
-            symbolic="asset",
+            symbolic=symbolic,
             error=update["errored"],
         )
-    return redirect(f"/asset/{_id}")
+    return redirect(f"/{symbolic}/{_id}")
 
 
-@app.route("/asset/<string:_id>/new", methods=["GET", "POST"])
-@csrf.exempt
-def asset_new_thing(_id):
+@app.route(
+    "/<option('asset', 'combo'):symbolic>/<string:_id>/new",
+    methods=["GET", "POST"],
+)
+def symbolic_new_thing(symbolic, _id):
     """Create new thing for asset"""
-    raw = get(f"{database}/asset/{_id}").json()
-    res = display.thing_new(raw)
+    material = _material_type(symbolic)
+    raw = get(f"{database}/{symbolic}/{_id}").json()
+    res = display.material_new(symbolic, raw)
     if request.method == "GET":
         return render_template(
             "material_new.html.j2",
             document=res,
-            symbolic="asset",
-            material="thing",
+            symbolic=symbolic,
+            material=material,
         )
     sanitized = sanitzer.material_new(res, request.form)
-    new = post(f"{database}/thing/create", json=sanitized).json()
+    new = post(f"{database}/{material}/create", json=sanitized).json()
     if new["errored"]:
         return render_template(
             "material_new.html.j2",
             document=res,
-            symbolic="asset",
-            material="thing",
+            symbolic=symbolic,
+            material=material,
             error=new["errored"],
         )
-    return redirect(f"/thing/{new['created'][0]}")
+    return redirect(f"/{material}/{new['created'][0]}")
 
-@app.route("/asset/new", methods=["GET", "POST"])
-@csrf.exempt
-def asset_new_type():
+
+@app.route("/<option('asset', 'combo'):symbolic>/new", methods=["GET", "POST"])
+def symbolic_new_type(symbolic):
     """Create new asset"""
     if request.method == "GET":
-        _id = request.args.get("subtype", "_Asset")
-        raw = get(f"{database}/asset/{_id}").json()
-        res = display.asset_new(raw)
+        _id = request.args.get("subtype", f"_{symbolic.title()}")
+        raw = get(f"{database}/{symbolic}/{_id}").json()
+        res = display.symbolic_edit(symbolic, raw)
         return render_template(
             "symbolic_new.html.j2",
             document=res,
-            symbolic="asset",
+            symbolic=symbolic,
         )
-    _id = request.form.get("inherit", "_Asset")
-    raw = get(f"{database}/asset/{_id}").json()
-    res = display.asset_new(raw)
+    _id = request.form.get("inherit", f"_{symbolic.title()}")
+    raw = get(f"{database}/{symbolic}/{_id}").json()
+    res = display.symbolic_edit(symbolic, raw)
     sanitized = sanitzer.symbolic_new(res, request.form)
-    update = post(f"{database}/asset/create", json=sanitized).json()
+    update = post(f"{database}/{symbolic}/create", json=sanitized).json()
     if update["errored"]:
         return render_template(
             "symbolic_new.html.j2",
             document=res,
-            symbolic="asset",
+            symbolic=symbolic,
         )
     return redirect(f"/asset/{update['created'][0]}")
 
-@app.route("/thing", methods=["GET"])
-@csrf.exempt
-def thing_all():
+
+@app.route("/<option('thing', 'group'):material>", methods=["GET"])
+def material_all_redirect(material):
+    """Redirect thing list with no page number to first page"""
+    return redirect(f"/{material}/1")
+
+
+@app.route("/<option('thing', 'group'):material>/<int:page>", methods=["GET"])
+def material_all(material, page):
     """Get all things"""
-    raw = get(f"{database}/thing/all").json()
-    res = display.thing_list(raw)
+    symbolic = _symbolic_type(material)
+    page = max(page - 1, 0)
+    raw = get(f"{database}/{material}/all/{page}").json()
+    last = raw.get("paginate", {}).get("last", 1)
+    if not raw[symbolic] and last < page:
+        return redirect(f"/{material}/{last}")
+    res = display.material_list(material, symbolic, raw)
     return render_template(
         "material_list.html.j2",
         documents=res,
-        symbolic="asset",
-        material="thing",
+        symbolic=symbolic,
+        material=material,
         symbolic_id=None,
     )
 
 
-@app.route("/thing/<string:_id>", methods=["GET"])
-@csrf.exempt
-def thing_info(_id):
-    """Get thing info"""
-    raw = get(f"{database}/thing/{_id}").json()
-    res = display.thing_info(raw)
-    return render_template(
-        "material_info.html.j2",
-        document=res,
-        symbolic="asset",
-        material="thing",
-    )
+@app.route(
+    "/<option('thing', 'group'):material>/<option('asset', 'combo'):symbolic>/<string:_id>",
+    methods=["GET"],
+)
+def material_symbolic_list_redirect(material, symbolic, _id):
+    """Redirect thing asset list with no page number to first page"""
+    return redirect(f"/{material}/{symbolic}/{_id}/1")
 
 
-@app.route("/thing/<string:_id>/edit", methods=["GET", "POST"])
-@csrf.exempt
-def thing_edit(_id):
-    """Edit thing"""
-    raw = get(f"{database}/thing/{_id}").json()
-    res = display.thing_edit(raw)
-    if request.method == "GET":
-        return render_template(
-            "material_edit.html.j2",
-            document=res,
-            symbolic="asset",
-            material="thing",
-        )
-    sanitized = sanitzer.material_edit(res, request.form)
-    update = put(f"{database}/thing/update", json=sanitized).json()
-    if update["errored"]:
-        return render_template(
-            "material_edit.html.j2",
-            document=res,
-            symbolic="asset",
-            material="thing",
-            error=update["errored"],
-        )
-    return redirect(f"/thing/{_id}")
-
-
-@app.route("/thing/asset/<string:_id>", methods=["GET"])
-@csrf.exempt
-def thing_asset_list(_id):
+@app.route(
+    (
+        "/<option('thing', 'group'):material>"
+        "/<option('asset', 'combo'):symbolic>"
+        "/<string:_id>"
+        "/<int:page>"
+    ),
+    methods=["GET"],
+)
+def material_symbolic_list(material, symbolic, _id, page):
     """List things for asset"""
-    raw = get(f"{database}/thing/asset/{_id}").json()
-    res = display.thing_list(raw)
+    if _symbolic_type(material) != symbolic:
+        return redirect(f"/{material}/{_symbolic_type(material)}/{_id}/{page}")
+    page = max(page - 1, 0)
+    raw = get(f"{database}/{material}/{symbolic}/{_id}/{page}").json()
+    last = raw.get("paginate", {}).get("last", 1)
+    if not raw[symbolic] and last < page:
+        return redirect(f"/{material}/{symbolic}/{_id}/{last}")
+    res = display.material_list(material, symbolic, raw)
     return render_template(
         "material_list.html.j2",
         documents=res,
-        symbolic="asset",
-        material="thing",
+        symbolic=symbolic,
+        material=material,
         symbolic_id=_id,
     )
 
 
-@app.route("/combo", methods=["GET"])
-@csrf.exempt
-def combo_all():
-    """Get all combos"""
-    raw = get(f"{database}/combo/all").json()
-    res = display.combo_list(raw)
-    return render_template(
-        "symbolic_list.html.j2",
-        documents=res,
-        symbolic="combo",
-        material="group",
-    )
-
-
-@app.route("/combo/<string:_id>", methods=["GET"])
-@csrf.exempt
-def combo_info(_id):
-    """Get groups for combo"""
-    raw = get(f"{database}/combo/{_id}").json()
-    res = display.combo_info(raw)
-    return render_template(
-        "symbolic_info.html.j2",
-        document=res,
-        symbolic="combo",
-        material="group",
-    )
-
-
-@app.route("/combo/<string:_id>/edit", methods=["GET"])
-@csrf.exempt
-def combo_edit(_id):
-    """Edit combo"""
-    raw = get(f"{database}/combo/{_id}").json()
-    res = display.combo_edit(raw)
-    return render_template(
-        "symbolic_form.html.j2",
-        document=res,
-        symbolic="combo",
-    )
-
-
-@app.route("/combo/<string:_id>/new", methods=["GET", "POST"])
-@csrf.exempt
-def combo_new_group(_id):
-    """Create group for combo"""
-    raw = get(f"{database}/combo/{_id}").json()
-    res = display.group_new(raw)
-    if request.method == "GET":
-        return render_template(
-            "material_new.html.j2",
-            document=res,
-            symbolic="combo",
-            material="group",
-        )
-    sanitized = sanitzer.material_new(res, request.form)
-    new = post(f"{database}/group/create", json=sanitized).json()
-    if new["errored"]:
-        return render_template(
-            "material_new.html.j2",
-            document=res,
-            symbolic="combo",
-            material="group",
-            error=new["errored"],
-        )
-    return redirect(f"/group/{new['created'][0]}")
-
-
-@app.route("/combo/new", methods=["GET", "POST"])
-@csrf.exempt
-def combo_new_type():
-    """Create new combo"""
-    if request.method == "GET":
-        _id = request.args.get("subtype", "_Combo")
-        raw = get(f"{database}/combo/{_id}").json()
-        res = display.combo_new(raw)
-        return render_template(
-            "symbolic_new.html.j2",
-            document=res,
-            symbolic="combo",
-        )
-    return request.form
-
-@app.route("/group", methods=["GET"])
-@csrf.exempt
-def group_all():
-    """Get all groups"""
-    raw = get(f"{database}/group/all").json()
-    res = display.group_list(raw)
-    return render_template(
-        "material_list.html.j2",
-        documents=res,
-        symbolic="combo",
-        material="group",
-        symbolic_id=None,
-    )
-
-
-@app.route("/group/<string:_id>", methods=["GET"])
-@csrf.exempt
-def group_info(_id):
-    """Get info for group"""
-    raw = get(f"{database}/group/{_id}").json()
-    res = display.group_info(raw)
+@app.route("/<option('thing', 'group'):material>/<string:_id>", methods=["GET"])
+def material_info(material, _id):
+    """Get thing info"""
+    symbolic = _symbolic_type(material)
+    raw = get(f"{database}/{material}/{_id}").json()
+    res = display.material_info(material, symbolic, raw)
     return render_template(
         "material_info.html.j2",
         document=res,
-        symbolic="combo",
-        material="group",
+        symbolic=symbolic,
+        material=material,
     )
 
 
-@app.route("/group/<string:_id>/edit", methods=["GET", "POST"])
-@csrf.exempt
-def group_edit(_id):
-    """Edit group"""
-    raw = get(f"{database}/group/{_id}").json()
-    res = display.group_edit(raw)
+@app.route(
+    "/<option('thing', 'group'):material>/<string:_id>/edit",
+    methods=["GET", "POST"],
+)
+def material_edit(material, _id):
+    """Edit thing"""
+    symbolic = _symbolic_type(material)
+    raw = get(f"{database}/{material}/{_id}").json()
+    res = display.material_edit(material, symbolic, raw)
     if request.method == "GET":
         return render_template(
             "material_edit.html.j2",
             document=res,
-            symbolic="combo",
-            material="group",
+            symbolic=symbolic,
+            material=material,
         )
     sanitized = sanitzer.material_edit(res, request.form)
-    update = put(f"{database}/group/update", json=sanitized).json()
+    update = put(f"{database}/{material}/update", json=sanitized).json()
     if update["errored"]:
         return render_template(
             "material_edit.html.j2",
             document=res,
-            symbolic="combo",
-            material="group",
+            symbolic=symbolic,
+            material=material,
             error=update["errored"],
         )
-    return redirect(f"/group/{_id}")
+    return redirect(f"/{material}/{_id}")
 
-
-@app.route("/group/combo/<string:_id>", methods=["GET"])
-@csrf.exempt
-def group_combo_list(_id):
-    """List all groups for combo"""
-    raw = get(f"{database}/group/combo/{_id}").json()
-    res = display.group_list(raw)
-    return render_template(
-        "material_list.html.j2",
-        documents=res,
-        symbolic="combo",
-        material="group",
-        symbolic_id=_id,
-    )
 
 @app.route("/download", methods=["GET"])
-@csrf.exempt
 def download():
     """Downlaod database as a json"""
     return get(f"{database}/download").json()
 
-@app.route("/upload", methods=["GET","POST"])
-@csrf.exempt
+
+@app.route("/upload", methods=["GET", "POST"])
 def upload():
     """Upload json to load info into database"""
     if request.method == "GET":
@@ -387,6 +302,7 @@ def upload():
 
     res = post(f"{database}/upload", json=data)
     return jsonify(res.json())
+
 
 if __name__ == "__main__":
     app.run()

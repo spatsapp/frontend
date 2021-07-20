@@ -1,18 +1,43 @@
 {% extends "base.html.j2" %}
 
+{% block css %}
+    <style>
+        p {
+            padding: 0px;
+            margin: 0px;
+        }
+    </style>
+{% endblock%}
+
 {% block nav %}
     {% if symbolic_id is not none %}
-        <br />
+        <hr />
         <div>
             |<a href="/{{symbolic}}/{{symbolic_id}}">{{symbolic|capitalize}} Info</a>
             |<a href="/{{symbolic}}/{{symbolic_id}}/new">New {{symbolic|capitalize}}</a>
             |
         </div>
     {% endif %}
+
+    {% if "paginate" in documents %}
+        <hr />
+        {% set paginate = documents['paginate'] %}
+        {% set prev = paginate['page'] %}
+        {% set next = paginate['page'] + 2 %}
+        {% set last = paginate['last'] + 1 %}
+        <div>
+            |{% if paginate['page'] != 0 %}<a href="/{{material}}/1">First Page</a>{% else %}<p>First Page</p>{% endif %}
+            |{% if paginate['page'] > 0 %}<a href="/{{material}}/{{prev}}">Prev Page</a>{% else %}<p>Prev Page</p>{% endif %}
+            |{% if paginate['range'][1] < paginate['count'] %}<a href="/{{material}}/{{next}}">Next Page</a>{% else %}<p>Next Page</p>{% endif %}
+            |{% if paginate['range'][1] < paginate['count'] %}<a href="/{{material}}/{{last}}">Last Page</a>{% else %}<p>Last Page</p>{% endif %}
+            |
+        </div>
+    {% endif %}
+    <hr />
 {% endblock %}
 
 {% block content %}
-    {% for document in documents %}
+    {% for document in documents["docs"] %}
         <a href="/{{material}}/{{document['_id']}}"><h2 class="row">{{document['primary'][1]}}</h2></a> 
         <a href="/{{material}}/{{symbolic}}/{{document['type']}}">({{document['symbolic']}})</a>
         <br />
