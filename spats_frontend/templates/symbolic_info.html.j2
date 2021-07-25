@@ -1,7 +1,7 @@
 {% extends "base.html.j2" %}
 
 {% block nav %}
-    <br />
+    <hr />
     <div>
         |<a href="/{{symbolic}}/{{document['_id']}}">{{symbolic|capitalize}} Info</a>
         |<a href="/{{symbolic}}/{{document['_id']}}/edit">Edit {{symbolic|capitalize}}</a>
@@ -9,6 +9,7 @@
         |<a href="/{{material}}/{{symbolic}}/{{document['_id']}}">{{symbolic|capitalize}} {{material|capitalize}}s</a>
         |
     </div>
+    <hr />
 {% endblock %}
 
 {% block content %}

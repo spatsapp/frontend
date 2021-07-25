@@ -2,7 +2,7 @@
 
 {% block css %}
     <style>
-        p {
+        nav p {
             padding: 0px;
             margin: 0px;
         }
@@ -25,11 +25,16 @@
         {% set prev = paginate['page'] %}
         {% set next = paginate['page'] + 2 %}
         {% set last = paginate['last'] + 1 %}
+        {% if symbolic_id is not none %}
+            {% set base_url = "/"~material~"/"~symbolic~"/"~symbolic_id %}
+        {% else %}
+            {% set base_url = "/"~material %}
+        {% endif %}
         <div>
-            |{% if paginate['page'] != 0 %}<a href="/{{material}}/1">First Page</a>{% else %}<p>First Page</p>{% endif %}
-            |{% if paginate['page'] > 0 %}<a href="/{{material}}/{{prev}}">Prev Page</a>{% else %}<p>Prev Page</p>{% endif %}
-            |{% if paginate['range'][1] < paginate['count'] %}<a href="/{{material}}/{{next}}">Next Page</a>{% else %}<p>Next Page</p>{% endif %}
-            |{% if paginate['range'][1] < paginate['count'] %}<a href="/{{material}}/{{last}}">Last Page</a>{% else %}<p>Last Page</p>{% endif %}
+            |{% if paginate['page'] != 0 %}<a href="{{base_url}}/1">First Page</a>{% else %}<p>First Page</p>{% endif %}
+            |{% if paginate['page'] > 0 %}<a href="{{base_url}}/{{prev}}">Prev Page</a>{% else %}<p>Prev Page</p>{% endif %}
+            |{% if paginate['range'][1] < paginate['count'] %}<a href="{{base_url}}/{{next}}">Next Page</a>{% else %}<p>Next Page</p>{% endif %}
+            |{% if paginate['range'][1] < paginate['count'] %}<a href="{{base_url}}/{{last}}">Last Page</a>{% else %}<p>Last Page</p>{% endif %}
             |
         </div>
     {% endif %}

@@ -1,12 +1,13 @@
 {% extends "base.html.j2" %}
 
 {% block nav %}
-    <br />
+    <hr />
     <div>
         |<a href="/{{material}}/{{document['_id']}}">{{material|title}} Info</a>
         |<a href="/{{material}}/{{document['_id']}}/edit">Edit {{material|title}}</a>
         |
     </div>
+    <hr />
 {% endblock %}
 
 {% block content %}

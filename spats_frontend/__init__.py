@@ -70,8 +70,12 @@ def clear_trailing():
 @app.route("/", methods=["GET"])
 def index():
     """Get list of api endpoints"""
-    return render_template("base.html.j2")
+    return render_template("search.html.j2")
 
+@app.route("/search", methods=["GET"])
+def search():
+    raw = post(f"{database}/search", json=request.args)
+    return raw.json()
 
 @app.route("/<option('asset', 'combo'):symbolic>", methods=["GET"])
 def symbolic_all(symbolic):

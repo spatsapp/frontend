@@ -1,0 +1,24 @@
+{% extends "base.html.j2" %}
+
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='form.css') }}">
+{% endblock css %}
+
+{% block content %}
+    {% if error is defined %}
+        {{error|safe}}
+    {% endif %}
+
+    <form action="/search" method="GET">
+        <table><tr><td>
+        <input
+            type="text"
+            id="search"
+            name="search"
+            placeholder="Search"
+        /></td>
+        <td><button>Search</button></td>
+        </tr>
+        </table>
+    </form>
+{% endblock %}
