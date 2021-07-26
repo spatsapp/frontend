@@ -108,9 +108,7 @@ class DisplayGenerator:
             symbolic = doc[symbolic_type][material["type"]]
             cur = self._many_material(material, symbolic)
             docs.append(cur)
-        ret = {
-            "docs": docs
-        }
+        ret = {"docs": docs}
         if doc.get("paginate"):
             ret["paginate"] = doc["paginate"]
         return ret
@@ -181,3 +179,50 @@ class DisplayGenerator:
                 symbolic["_id"],
             ),
         }
+
+    def _symbolic_search(self, doc):
+        res = {
+            "_id": doc["_id"],
+            "name": doc["name"]
+        }
+        if "primary" in doc:
+            name = doc["primary"]
+            desc = doc["fields"][name]["description"]
+            res["primary"] = (name, desc)
+        if "secondary" in doc:
+            name = doc["secondary"]
+            desc = doc["fields"][name]["description"]
+            res["secondary"] = (name, desc)
+        if "tertiary" in doc:
+            tertiary = []
+            for tert in doc["tertiary"]:
+                desc = doc["fields"][tert]["description"]
+                tertiary.append((tert, desc))
+            res["tertiary"] = tertiary
+        return res
+
+    def search(self, res):
+        result = {
+            "asset": [],
+            "combo": [],
+            "thing": [],
+            "group": [],
+        }
+
+        for asset in res.get("asset", []):
+            result["asset"].append(self._symbolic_search(asset))
+
+        for combo in res.get("combo", []):
+            result["combo"].append(self._symbolic_search(combo))
+
+        for thing in res.get("thing", []):
+            material = thing["thing"]
+            symbolic = thing["asset"][material["type"]]
+            result["thing"].append(self._many_material(material, symbolic))
+
+        for group in res.get("group", []):
+            material = group["group"]
+            symbolic = group["combo"][material["type"]]
+            result["group"].append(self._many_material(material, symbolic))
+
+        return result

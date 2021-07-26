@@ -74,8 +74,12 @@ def index():
 
 @app.route("/search", methods=["GET"])
 def search():
-    raw = post(f"{database}/search", json=request.args)
-    return raw.json()
+    raw = post(f"{database}/search", json=request.args).json()
+    res = display.search(raw)
+    return render_template(
+        "search.html.j2",
+        results=res,
+    )
 
 @app.route("/<option('asset', 'combo'):symbolic>", methods=["GET"])
 def symbolic_all(symbolic):

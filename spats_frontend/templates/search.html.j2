@@ -1,4 +1,5 @@
 {% extends "base.html.j2" %}
+{% from "macro_list.html.j2" import material_list, symbolic_list %}
 
 {% block css %}
     <link rel="stylesheet" href="{{ url_for('static', filename='form.css') }}">
@@ -17,8 +18,34 @@
             name="search"
             placeholder="Search"
         /></td>
+        <td>
+        <select id="collection" name="collection">
+            <option value="asset combo thing group">All</option>
+            <option value="asset">Asset</option>
+            <option value="combo">Combo</option>
+            <option value="asset combo">Symbolic</option>
+            <option value="thing">Thing</option>
+            <option value="group">Group</option>
+            <option value="thing group">Material</option>
+        </select></td>
         <td><button>Search</button></td>
         </tr>
         </table>
     </form>
+
+    {% if results is defined %}
+        <br />
+        {% for document in results["asset"] %}
+            {{ symbolic_list("asset", document) }}
+        {% endfor %}
+        {% for document in results["combo"] %}
+            {{ symbolic_list("combo", document) }}
+        {% endfor %}
+        {% for document in results["thing"] %}
+            {{ material_list("thing", "asset", document) }}
+        {% endfor %}
+        {% for document in results["group"] %}
+            {{ material_list("group", "combo", document) }}
+        {% endfor %}
+    {% endif %}
 {% endblock %}
