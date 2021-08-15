@@ -23,6 +23,7 @@
             </div>
             {% block nav %}
             {% endblock nav %}
+            <hr />
         </nav>
         <hr />
         <main>
@@ -32,7 +33,12 @@
         </main>
         <hr />
         <footer>
-            {% block footer %}Spats (c) 2019-2021{% endblock footer %}
+            {% block footer %}
+            {% endblock footer %}
+            <a href="/upload">Upload</a>
+            <a href="/download">Download</a>
+            <br />
+            Spats (c) 2019-2021
         </footer>
     {% endblock body %}
     {% block js %}{% endblock js %}
