@@ -34,18 +34,33 @@
     </form>
 
     {% if results is defined %}
-        <br />
-        {% for document in results["asset"] %}
-            {{ symbolic_list("asset", document) }}
-        {% endfor %}
-        {% for document in results["combo"] %}
-            {{ symbolic_list("combo", document) }}
-        {% endfor %}
-        {% for document in results["thing"] %}
-            {{ material_list("thing", "asset", document) }}
-        {% endfor %}
-        {% for document in results["group"] %}
-            {{ material_list("group", "combo", document) }}
-        {% endfor %}
+        {% if results["asset"] %}
+            <h1>Assets</h1>
+            {% for document in results["asset"] %}
+                {{ symbolic_list("asset", document) }}
+            {% endfor %}
+            <hr />
+        {% endif %}
+        {% if results["combo"] %}
+            <h1>Combos</h1>
+            {% for document in results["combo"] %}
+                {{ symbolic_list("combo", document) }}
+            {% endfor %}
+            <hr />
+        {% endif %}
+        {% if results["thing"] %}
+            <h1>Things</h1>
+            {% for document in results["thing"] %}
+                {{ material_list("thing", "asset", document) }}
+            {% endfor %}
+            <hr />
+        {% endif %}
+        {% if results["group"] %}
+            <h1>Groups</h1>
+            {% for document in results["group"] %}
+                {{ material_list("group", "combo", document) }}
+            {% endfor %}
+            <hr />
+        {% endif %}
     {% endif %}
 {% endblock %}
