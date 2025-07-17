@@ -37,7 +37,7 @@ class OptionConverter(BaseConverter):
         return value
 
 
-app = Flask(__name__, static_url_path="")
+app = Flask(__name__, static_url_path="/static")
 app.config.from_pyfile("frontend.cfg")
 app.url_map.converters["option"] = OptionConverter
 
@@ -189,13 +189,13 @@ def symbolic_new_type(symbolic):
     return redirect(f"/asset/{update['created'][0]}")
 
 
-@app.route("/<option('thing', 'group'):material>", methods=["GET"])
-def material_all_redirect(material):
-    """Redirect thing list with no page number to first page"""
-    return redirect(f"/{material}/1")
+# @app.route("/<option('thing', 'group'):material>", methods=["GET"])
+# def material_all_redirect(material):
+#     """Redirect thing list with no page number to first page"""
+#     return redirect(f"/{material}/page/1")
 
 
-@app.route("/<option('thing', 'group'):material>/<int:page>", methods=["GET"])
+@app.route("/<option('thing', 'group'):material>/page/<int:page>", methods=["GET"])
 def material_all(material, page):
     """Get all things"""
     symbolic = _symbolic_type(material)
@@ -214,84 +214,86 @@ def material_all(material, page):
     )
 
 
-@app.route(
-    "/<option('thing', 'group'):material>/<option('asset', 'combo'):symbolic>/<string:_id>",
-    methods=["GET"],
-)
-def material_symbolic_list_redirect(material, symbolic, _id):
-    """Redirect thing asset list with no page number to first page"""
-    return redirect(f"/{material}/{symbolic}/{_id}/1")
 
-
-@app.route(
-    (
-        "/<option('thing', 'group'):material>"
-        "/<option('asset', 'combo'):symbolic>"
-        "/<string:_id>"
-        "/<int:page>"
-    ),
-    methods=["GET"],
-)
-def material_symbolic_list(material, symbolic, _id, page):
-    """List things for asset"""
-    if _symbolic_type(material) != symbolic:
-        return redirect(f"/{material}/{_symbolic_type(material)}/{_id}/{page}")
-    page = max(page - 1, 0)
-    raw = get(f"{database}/{material}/{symbolic}/{_id}/{page}").json()
-    last = raw.get("paginate", {}).get("last", 1)
-    if not raw[symbolic] and last < page:
-        return redirect(f"/{material}/{symbolic}/{_id}/{last}")
-    res = display.material_list(material, symbolic, raw)
-    return render_template(
-        "material_list.html.j2",
-        documents=res,
-        symbolic=symbolic,
-        material=material,
-        symbolic_id=_id,
-    )
-
-
-@app.route("/<option('thing', 'group'):material>/<string:_id>", methods=["GET"])
-def material_info(material, _id):
+# @app.route("/<option('thing', 'group'):material>/<string:_id>", methods=["GET"])
+@app.route("/thing/<string:_id>", methods=["GET"])
+def material_info(_id):
     """Get thing info"""
-    symbolic = _symbolic_type(material)
-    raw = get(f"{database}/{material}/{_id}").json()
-    res = display.material_info(material, symbolic, raw)
+    symbolic = _symbolic_type("thing")
+    raw = get(f"{database}/thing/{_id}").json()
+    res = display.material_info("thing", symbolic, raw)
     return render_template(
         "material_info.html.j2",
         document=res,
         symbolic=symbolic,
-        material=material,
+        material="thing",
     )
 
 
+# @app.route(
+#     "/<option('thing', 'group'):material>/<option('asset', 'combo'):symbolic>/<string:_id>",
+#     methods=["GET"],
+# )
+# def material_symbolic_list_redirect(material, symbolic, _id):
+#     """Redirect thing asset list with no page number to first page"""
+#     return redirect(f"/{material}/{symbolic}/{_id}/1")
+
+
+# @app.route(
+#     (
+#         "/<option('thing', 'group'):material>"
+#         "/<option('asset', 'combo'):symbolic>"
+#         "/<string:_id>"
+#         "/<int:page>"
+#     ),
+#     methods=["GET"],
+# )
+# def material_symbolic_list(material, symbolic, _id, page):
+#     """List things for asset"""
+#     if _symbolic_type(material) != symbolic:
+#         return redirect(f"/{material}/{_symbolic_type(material)}/{_id}/{page}")
+#     page = max(page - 1, 0)
+#     raw = get(f"{database}/{material}/{symbolic}/{_id}/{page}").json()
+#     last = raw.get("paginate", {}).get("last", 1)
+#     if not raw[symbolic] and last < page:
+#         return redirect(f"/{material}/{symbolic}/{_id}/{last}")
+#     res = display.material_list(material, symbolic, raw)
+#     return render_template(
+#         "material_list.html.j2",
+#         documents=res,
+#         symbolic=symbolic,
+#         material=material,
+#         symbolic_id=_id,
+#     )
+
+
 @app.route(
-    "/<option('thing', 'group'):material>/<string:_id>/edit",
+    "/thing/<string:_id>/edit",
     methods=["GET", "POST"],
 )
-def material_edit(material, _id):
+def material_edit(_id):
     """Edit thing"""
-    symbolic = _symbolic_type(material)
-    raw = get(f"{database}/{material}/{_id}").json()
-    res = display.material_edit(material, symbolic, raw)
+    symbolic = _symbolic_type("thing")
+    raw = get(f"{database}/thing/{_id}").json()
+    res = display.material_edit("thing", symbolic, raw)
     if request.method == "GET":
         return render_template(
             "material_edit.html.j2",
             document=res,
             symbolic=symbolic,
-            material=material,
+            material="thing",
         )
     sanitized = sanitzer.material_edit(res, request.form)
-    update = put(f"{database}/{material}/update", json=sanitized).json()
+    update = put(f"{database}/thing/update", json=sanitized).json()
     if update["errored"]:
         return render_template(
             "material_edit.html.j2",
             document=res,
             symbolic=symbolic,
-            material=material,
+            material="thing",
             error=update["errored"],
         )
-    return redirect(f"/{material}/{_id}")
+    return redirect(f"/thing/{_id}")
 
 
 @app.route("/download", methods=["GET"])
