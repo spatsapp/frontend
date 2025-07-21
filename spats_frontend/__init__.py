@@ -1,16 +1,12 @@
 """Flask frontend for SPATS"""
-from pprint import pformat
 from json import load
 
-import dotenv
 from flask import (
     Flask,
     jsonify,
     redirect,
     render_template,
     request,
-    send_from_directory,
-    url_for,
 )
 
 # from flask_wtf.csrf import CSRFProtect
@@ -189,10 +185,10 @@ def symbolic_new_type(symbolic):
     return redirect(f"/asset/{update['created'][0]}")
 
 
-# @app.route("/<option('thing', 'group'):material>", methods=["GET"])
-# def material_all_redirect(material):
-#     """Redirect thing list with no page number to first page"""
-#     return redirect(f"/{material}/page/1")
+@app.route("/<option('thing', 'group'):material>", methods=["GET"])
+def material_all_redirect(material):
+    """Redirect thing list with no page number to first page"""
+    return redirect(f"/{material}/page/1")
 
 
 @app.route("/<option('thing', 'group'):material>/page/<int:page>", methods=["GET"])
@@ -215,8 +211,8 @@ def material_all(material, page):
 
 
 
-# @app.route("/<option('thing', 'group'):material>/<string:_id>", methods=["GET"])
-@app.route("/thing/<string:_id>", methods=["GET"])
+# @app.route("/thing/<string:_id>", methods=["GET"])
+@app.route("/<option('thing', 'group'):material>/<string:_id>", methods=["GET"])
 def material_info(_id):
     """Get thing info"""
     symbolic = _symbolic_type("thing")
@@ -230,41 +226,41 @@ def material_info(_id):
     )
 
 
-# @app.route(
-#     "/<option('thing', 'group'):material>/<option('asset', 'combo'):symbolic>/<string:_id>",
-#     methods=["GET"],
-# )
-# def material_symbolic_list_redirect(material, symbolic, _id):
-#     """Redirect thing asset list with no page number to first page"""
-#     return redirect(f"/{material}/{symbolic}/{_id}/1")
+@app.route(
+    "/<option('thing', 'group'):material>/<option('asset', 'combo'):symbolic>/<string:_id>",
+    methods=["GET"],
+)
+def material_symbolic_list_redirect(material, symbolic, _id):
+    """Redirect thing asset list with no page number to first page"""
+    return redirect(f"/{material}/{symbolic}/{_id}/1")
 
 
-# @app.route(
-#     (
-#         "/<option('thing', 'group'):material>"
-#         "/<option('asset', 'combo'):symbolic>"
-#         "/<string:_id>"
-#         "/<int:page>"
-#     ),
-#     methods=["GET"],
-# )
-# def material_symbolic_list(material, symbolic, _id, page):
-#     """List things for asset"""
-#     if _symbolic_type(material) != symbolic:
-#         return redirect(f"/{material}/{_symbolic_type(material)}/{_id}/{page}")
-#     page = max(page - 1, 0)
-#     raw = get(f"{database}/{material}/{symbolic}/{_id}/{page}").json()
-#     last = raw.get("paginate", {}).get("last", 1)
-#     if not raw[symbolic] and last < page:
-#         return redirect(f"/{material}/{symbolic}/{_id}/{last}")
-#     res = display.material_list(material, symbolic, raw)
-#     return render_template(
-#         "material_list.html.j2",
-#         documents=res,
-#         symbolic=symbolic,
-#         material=material,
-#         symbolic_id=_id,
-#     )
+@app.route(
+    (
+        "/<option('thing', 'group'):material>"
+        "/<option('asset', 'combo'):symbolic>"
+        "/<string:_id>"
+        "/<int:page>"
+    ),
+    methods=["GET"],
+)
+def material_symbolic_list(material, symbolic, _id, page):
+    """List things for asset"""
+    if _symbolic_type(material) != symbolic:
+        return redirect(f"/{material}/{_symbolic_type(material)}/{_id}/{page}")
+    page = max(page - 1, 0)
+    raw = get(f"{database}/{material}/{symbolic}/{_id}/{page}").json()
+    last = raw.get("paginate", {}).get("last", 1)
+    if not raw[symbolic] and last < page:
+        return redirect(f"/{material}/{symbolic}/{_id}/{last}")
+    res = display.material_list(material, symbolic, raw)
+    return render_template(
+        "material_list.html.j2",
+        documents=res,
+        symbolic=symbolic,
+        material=material,
+        symbolic_id=_id,
+    )
 
 
 @app.route(
