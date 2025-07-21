@@ -71,7 +71,12 @@ def index():
 @app.route("/search", methods=["GET"])
 def search():
     """Search for documents"""
-    raw = post(f"{database}/search", json=request.args).json()
+    print(request.args)
+    data = {
+        "search": request.args.get("search"),
+        "collections": request.args.get("collection", "").split()
+    }
+    raw = get(f"{database}/search", json=data).json()
     res = display.search(raw)
     return render_template(
         "search.html.j2",
