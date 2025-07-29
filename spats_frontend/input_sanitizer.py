@@ -119,7 +119,7 @@ class InputSanitizer:
         return self._symbolic_parameter_values(type_, params)
 
     def _symbolic_unset(self, field_type, new_params, og_params):
-        unset = {}
+        unset = []
 
         type_params = ["required", "unique"] + [
             self._uncompress_parameter_name(name)
@@ -130,7 +130,7 @@ class InputSanitizer:
                 if param not in type_params or (
                     param in type_params and param not in new_params
                 ):
-                    unset[param] = ""
+                    unset.append(param)
 
         return unset
 
@@ -192,7 +192,7 @@ class InputSanitizer:
         """Edit a symbolic object"""
         update = {}
         rename = {}
-        unset = {}
+        unset = []
         if form["primary"] != original["primary"]:
             update["primary"] = form["primary"]
         if form["secondary"] != original["secondary"]:
@@ -263,19 +263,23 @@ class InputSanitizer:
                     update["fields"] = {}
                 update["fields"][(og_field_name or field_name)] = field
             if param_unset:
-                if "fields" not in unset:
-                    unset["fields"] = {}
-                unset["fields"][og_field["name"]] = {"parameters": param_unset}
+                for param in param_unset:
+                    unset.append(f'{og_field["name"]}.{param}')
 
         if order != [field["name"] for field in original["fields"]]:
             update["order"] = order
 
-        return {
-            "_id": original["_id"],
-            "update": update,
-            "unset": unset,
-            "rename": rename,
-        }
+        edit = {}
+        if update:
+            edit["update"] = update
+        if unset:
+            edit["unset"] = unset
+        if rename:
+            edit["rename"] = rename
+        if edit:
+            edit["_id"] = original["_id"]
+
+        return edit
 
     def symbolic_new(self, original, form):
         """Create new symbolic object"""
