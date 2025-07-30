@@ -58,17 +58,12 @@ class InputSanitizer:
             if field["value"] != value:
                 if value == "":
                     if "unset" not in new:
-                        new["unset"] = {}
-                    new["unset"][name] = ""
+                        new["unset"] = []
+                    new["unset"].append(name)
                 else:
                     if "fields" not in new:
                         new["fields"] = {}
-
-                    new["fields"][name] = {
-                        "value": value,
-                        "type": field["type"],
-                        "parameters": field["parameters"],
-                    }
+                    new["fields"][name] = value
         return new if "fields" in new or "unset" in new else {}
 
     def material_new(self, original, form):

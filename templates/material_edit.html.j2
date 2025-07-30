@@ -58,7 +58,7 @@
                         id="{{field['name']}}"
                         name="{{field['name']}}"
                         value="{{field['value']}}"
-                        step="0.{{'0'*((parameters['precision']|int)-1)}}1"
+                        {% if "precision" in parameters %}step="0.{{'0'*((parameters['precision']|int)-1)}}1"{% else %}step="0.01"{% endif %}
                         {% if "min" in parameters %}min="{{parameters['min_value']}}"{% endif %}
                         {% if "max" in parameters %}max="{{parameters['max_value']}}"{% endif %}
                         {% if required %}required{% endif %}

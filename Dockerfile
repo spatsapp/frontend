@@ -1,12 +1,14 @@
-FROM python:3
+FROM python:3.12
 
 WORKDIR /app
 
-COPY ./spats_frontend ./spats_frontend
+COPY ./frontend ./frontend
+COPY ./static ./static
+COPY ./templates ./templates
+COPY ./frontend.cfg .
+
 COPY ./requirements.txt .
-COPY ./setup.py .
-COPY ./.flaskenv .
 
 RUN pip install -r requirements.txt
 
-CMD [ "python3", "-m", "flask", "run" ]
+CMD [ "python3", "-m", "frontend" ]

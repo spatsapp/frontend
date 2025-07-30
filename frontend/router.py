@@ -222,8 +222,11 @@ class MaterialRouter(GenericRouter):
             Mount("/{material:material}", routes=[
                 Route("/", self.material_all_redirect, methods=["GET"]),
                 Route("/{page:int}", self.material_all, methods=["GET"]),
-                Route("/edit", self.material_edit, methods=["GET"]),
-                Route("/edit", self.material_update, methods=["POST"]),
+                Mount("/{_id:suid}",  routes=[
+                    Route("/", self.material_info, methods=["GET"]),
+                    Route("/edit", self.material_edit, methods=["GET"]),
+                    Route("/edit", self.material_update, methods=["POST"]),
+                ]),
                 Mount("/{symbolic:symbolic}/{_id:suid}", routes=[
                     Route("/", self.material_symbolic_list_redirect, methods=["GET"]),
                     Route("/{page:int}", self.material_symbolic_list, methods=["GET"]),
@@ -344,18 +347,19 @@ class MaterialRouter(GenericRouter):
         res = self.display.material_edit(material, symbolic, raw)
         async with request.form() as form:
             sanitized = self.sanitzer.material_edit(res, form)
-        update = self.put("/thing/update", json=sanitized)
-        if update["errored"]:
-            return self.templater(
-                request,
-                "material_edit.html.j2",
-                context={
-                    "document": res,
-                    "symbolic": symbolic,
-                    "material": material,
-                    "error": update["errored"],
-                }
-            )
+        if sanitized:
+            update = self.put("/thing/update", json=sanitized)
+            if update["errored"]:
+                return self.templater(
+                    request,
+                    "material_edit.html.j2",
+                    context={
+                        "document": res,
+                        "symbolic": symbolic,
+                        "material": material,
+                        "error": update["errored"],
+                    }
+                )
         return RedirectResponse(f"/{material}/{_id}", status_code=HTTPStatus.SEE_OTHER)
 
 
