@@ -2,11 +2,11 @@
 {% from "macro_symbolic_form.html.j2" import symbolic_form %}
 
 {% block css %}
-    <link rel="stylesheet" href="{{ url_for('static', path='form.css') }}">
+    <link rel="stylesheet" href="/static/form.css">
 {% endblock css %}
 
 {% block js %}
-    <script type="text/javascript" src="{{ url_for('static', path='symbolic_form.js') }}" defer></script>
+    <script type="text/javascript" src="/static/symbolic_form.js" defer></script>
 {% endblock js %}
 
 {% block content %}
